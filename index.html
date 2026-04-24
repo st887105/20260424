@@ -2,197 +2,437 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>車城國小｜雷射雕刻半色調工具</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
 
+/* ══ 全域變數 ══ */
 :root {
-  --bg:        #1a1a2e;
-  --surface:   #16213e;
-  --panel:     #0f3460;
-  --accent:    #e94560;
-  --accent2:   #f5a623;
-  --text:      #e0e0e0;
-  --text-dim:  #8892a4;
-  --border:    #2a3a5c;
-  --success:   #4ade80;
-  --radius:    10px;
-  --sidebar-w: 340px;
+  --bg:       #1a1a2e;
+  --surface:  #16213e;
+  --panel:    #0f3460;
+  --accent:   #e94560;
+  --accent2:  #f5a623;
+  --text:     #e0e0e0;
+  --dim:      #8892a4;
+  --border:   #2a3a5c;
+  --green:    #4ade80;
+  --r:        10px;
+  --sb:       320px; /* sidebar 寬 */
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overscroll-behavior:none;}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;
+  font-size:14px;
+}
 
-/* Header */
-header{background:var(--surface);border-bottom:3px solid var(--accent);padding:14px 24px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.hicon{font-size:26px;background:var(--accent);width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-header h1{font-size:16px;font-weight:700;color:#fff;line-height:1.3;}
-header p{font-size:11px;color:var(--text-dim);margin-top:2px;}
-.hbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+/* ══ Header ══ */
+header{
+  background:var(--surface);
+  border-bottom:3px solid var(--accent);
+  padding:12px 20px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;min-height:60px;
+}
+.hico{
+  font-size:24px;width:42px;height:42px;background:var(--accent);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+header h1{font-size:15px;font-weight:700;color:#fff;line-height:1.3;}
+header p{font-size:11px;color:var(--dim);margin-top:1px;}
+.hbadge{
+  margin-left:auto;background:var(--accent);color:#fff;
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;
+}
 
-/* Layout */
-.layout{display:flex;flex:1;overflow:hidden;min-height:0;}
+/* ══ Desktop layout ══ */
+.layout{
+  display:flex;flex:1;overflow:hidden;min-height:0;
+}
 
-/* Sidebar */
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;}
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sb);min-width:var(--sb);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  overflow-y:auto;flex-shrink:0;
+  display:flex;flex-direction:column;
+}
 .sidebar::-webkit-scrollbar{width:4px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
 
-/* Step blocks */
-.step{border-bottom:1px solid var(--border);padding:18px 20px;}
-.step-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.step-num{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-title{font-size:14px;font-weight:700;color:#fff;}
-.step-title small{display:block;font-size:10px;color:var(--text-dim);font-weight:400;margin-top:1px;}
+/* ── Main ── */
+.main{
+  flex:1;display:flex;flex-direction:column;min-width:0;
+  background:#111827;
+}
 
-/* Upload */
-.upload-box{border:2px dashed var(--border);border-radius:var(--radius);padding:22px 16px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.02);}
-.upload-box:hover,.upload-box.over{border-color:var(--accent);background:rgba(233,69,96,0.06);}
-.upload-box .ico{font-size:32px;margin-bottom:8px;}
+/* ══ Step blocks ══ */
+.step{
+  border-bottom:1px solid var(--border);
+  padding:16px 18px;
+}
+.step-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.snum{
+  background:var(--accent);color:#fff;
+  width:24px;height:24px;min-width:24px;
+  border-radius:50%;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;
+}
+.stit{font-size:14px;font-weight:700;color:#fff;}
+.stit small{display:block;font-size:10px;color:var(--dim);font-weight:400;margin-top:2px;line-height:1.5;}
+
+/* ── Upload ── */
+.upload-box{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:20px 14px;text-align:center;cursor:pointer;
+  transition:all .2s;background:rgba(255,255,255,.02);
+  user-select:none;
+}
+.upload-box:hover,.upload-box.over{border-color:var(--accent);background:rgba(233,69,96,.07);}
+.upload-box .ico{font-size:32px;margin-bottom:6px;}
 .upload-box .main{font-size:13px;font-weight:500;color:#fff;}
-.upload-box .sub{font-size:11px;color:var(--text-dim);margin-top:4px;}
+.upload-box .sub{font-size:11px;color:var(--dim);margin-top:4px;}
 #fileInput{display:none;}
-.img-info{display:none;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:6px;}
-.img-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid var(--border);flex-shrink:0;}
-.img-meta{font-size:11px;color:var(--text-dim);line-height:1.6;}
+
+.img-card{
+  display:none;align-items:center;gap:10px;
+  margin-top:10px;padding:8px 10px;
+  background:rgba(255,255,255,.04);border-radius:8px;
+}
+.img-thumb{width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;}
+.img-meta{font-size:11px;color:var(--dim);line-height:1.7;}
 .img-meta strong{color:var(--text);}
 
-/* Controls */
-.ctrl{margin-bottom:12px;}
+/* ── Controls ── */
+.ctrl{margin-bottom:13px;}
 .ctrl:last-child{margin-bottom:0;}
-.ctrl label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-dim);margin-bottom:5px;}
-.val{font-weight:700;color:var(--accent2);font-size:11px;background:rgba(245,166,35,0.12);padding:1px 7px;border-radius:4px;}
-input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-input[type=number]{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color 0.2s;}
+.ctrl>label{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--dim);margin-bottom:5px;
+}
+.val{
+  font-weight:700;color:var(--accent2);font-size:11px;
+  background:rgba(245,166,35,.13);padding:1px 7px;border-radius:4px;
+  white-space:nowrap;
+}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:20px;}
+input[type=number]{
+  width:100%;background:rgba(255,255,255,.05);
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--text);padding:8px 12px;font-size:14px;
+  font-family:'Noto Sans TC',sans-serif;outline:none;
+  transition:border-color .2s;
+}
 input[type=number]:focus{border-color:var(--accent);}
-select{width:100%;background:rgba(15,30,60,0.9);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 12px;font-size:12px;outline:none;cursor:pointer;}
+select{
+  width:100%;background:rgba(15,30,60,.95);
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--text);padding:8px 12px;font-size:13px;
+  outline:none;cursor:pointer;
+}
 select option{background:#16213e;}
 .dim-g{display:grid;grid-template-columns:1fr 24px 1fr;gap:8px;align-items:end;}
-.sep{text-align:center;font-size:18px;color:var(--text-dim);padding-bottom:7px;}
-.lock-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none;margin-top:8px;}
+.sep{text-align:center;font-size:18px;color:var(--dim);padding-bottom:8px;}
+.lock-lbl{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--dim);cursor:pointer;user-select:none;margin-top:8px;
+}
 .lock-lbl input{accent-color:var(--accent);}
 
-/* Toggle */
-.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+/* ── Toggle ── */
+.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .tog-row:last-child{margin-bottom:0;}
-.tog-lbl{font-size:12px;color:var(--text);}
-.sw{position:relative;width:42px;height:23px;flex-shrink:0;}
+.tog-lbl{font-size:13px;color:var(--text);line-height:1.3;}
+.tog-lbl small{display:block;font-size:10px;color:var(--dim);}
+.sw{position:relative;width:44px;height:24px;flex-shrink:0;}
 .sw input{opacity:0;width:0;height:0;}
-.sw-t{position:absolute;inset:0;background:var(--border);border-radius:23px;cursor:pointer;transition:.25s;}
-.sw-t::before{content:'';position:absolute;height:17px;width:17px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;}
+.sw-t{position:absolute;inset:0;background:var(--border);border-radius:24px;cursor:pointer;transition:.25s;}
+.sw-t::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;}
 .sw input:checked+.sw-t{background:var(--accent);}
-.sw input:checked+.sw-t::before{transform:translateX(19px);}
+.sw input:checked+.sw-t::before{transform:translateX(20px);}
 
-/* Sub panel */
-.sub-panel{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;display:none;}
+/* ── Sub panel ── */
+.sub-panel{
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:8px;padding:12px;margin-top:8px;display:none;
+}
 .sub-panel.open{display:block;}
 
-/* Tip */
-.tip{font-size:10px;color:var(--text-dim);line-height:1.6;margin-top:6px;padding:8px 10px;background:rgba(255,255,255,0.03);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
+/* ── Tip ── */
+.tip{
+  font-size:10px;color:var(--dim);line-height:1.6;
+  margin-top:8px;padding:8px 10px;
+  background:rgba(255,255,255,.03);
+  border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;
+}
 .tip strong{color:var(--accent2);}
 .tip a{color:var(--accent2);}
 
-/* Buttons */
-.btn{width:100%;padding:11px 16px;border:none;border-radius:var(--radius);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Noto Sans TC',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+/* ── Alert banner ── */
+.alert{
+  display:none;padding:8px 10px;border-radius:6px;
+  font-size:11px;line-height:1.6;margin-top:8px;
+  background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);
+  color:var(--accent2);
+}
+.alert.show{display:block;}
+.alert.info{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.3);color:var(--green);}
+
+/* ── Buttons ── */
+.btn{
+  width:100%;padding:13px 16px;border:none;border-radius:var(--r);
+  font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;
+  font-family:'Noto Sans TC',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:8px;min-height:48px;  /* 手機可點擊最小高度 */
+}
 .btn:last-child{margin-bottom:0;}
 .btn:disabled{opacity:.35;cursor:not-allowed;}
 .btn-main{background:var(--accent);color:#fff;}
-.btn-main:not(:disabled):hover{background:#c73652;}
+.btn-main:not(:disabled):active,.btn-main:not(:disabled):hover{background:#c73652;}
 .btn-dl{background:var(--panel);color:var(--text);border:1px solid var(--border);}
-.btn-dl:not(:disabled):hover{border-color:var(--accent);color:#fff;}
-.btn-svg{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.3);}
-.btn-svg:not(:disabled):hover{background:rgba(74,222,128,.2);}
+.btn-dl:not(:disabled):active,.btn-dl:not(:disabled):hover{border-color:var(--accent);color:#fff;}
+.btn-svg{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.3);}
+.btn-svg:not(:disabled):active,.btn-svg:not(:disabled):hover{background:rgba(74,222,128,.2);}
 
-/* Progress */
-.prog-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin:10px 0 4px;display:none;}
+/* ── Progress ── */
+.prog-wrap{height:5px;background:var(--border);border-radius:4px;overflow:hidden;margin:10px 0 4px;display:none;}
 .prog-wrap.show{display:block;}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .1s;width:0%;}
-.prog-lbl{font-size:10px;color:var(--text-dim);text-align:right;display:none;}
+.prog-lbl{font-size:11px;color:var(--dim);text-align:right;display:none;}
 .prog-lbl.show{display:block;}
 
-/* Main */
-.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#111827;}
-
-/* Tabs */
-.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.tab{padding:11px 14px;font-size:12px;font-weight:500;color:var(--text-dim);background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:'Noto Sans TC',sans-serif;}
+/* ══ Tab bar ══ */
+.tab-bar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 16px;display:flex;align-items:center;gap:4px;flex-shrink:0;
+  overflow-x:auto;
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab{
+  padding:12px 14px;font-size:12px;font-weight:500;
+  color:var(--dim);background:transparent;border:none;
+  border-bottom:3px solid transparent;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+  font-family:'Noto Sans TC',sans-serif;min-height:44px;
+}
 .tab:hover{color:var(--text);}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 
-/* Canvas area */
-.canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px;position:relative;background-color:#1f2937;background-image:linear-gradient(45deg,#374151 25%,transparent 25%),linear-gradient(-45deg,#374151 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#374151 75%),linear-gradient(-45deg,transparent 75%,#374151 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0px;}
-canvas{max-width:100%;max-height:calc(100vh - 200px);border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none;}
-.empty{text-align:center;pointer-events:none;}
-.empty .eico{font-size:72px;opacity:.2;}
-.empty p{color:var(--text-dim);font-size:13px;margin-top:16px;line-height:1.8;}
+/* ══ Canvas area ══ */
+.canvas-wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  overflow:auto;padding:20px;position:relative;
+  background-color:#1f2937;
+  background-image:
+    linear-gradient(45deg,#374151 25%,transparent 25%),
+    linear-gradient(-45deg,#374151 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#374151 75%),
+    linear-gradient(-45deg,transparent 75%,#374151 75%);
+  background-size:20px 20px;
+  background-position:0 0,0 10px,10px -10px,-10px 0px;
+}
+canvas{
+  max-width:100%;max-height:calc(100vh - 220px);
+  border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:none;
+}
+.empty-state{text-align:center;pointer-events:none;}
+.empty-state .eico{font-size:64px;opacity:.2;}
+.empty-state p{color:var(--dim);font-size:13px;margin-top:14px;line-height:1.8;}
 
-/* Status */
-.status{background:var(--surface);border-top:1px solid var(--border);padding:8px 20px;display:flex;flex-wrap:wrap;gap:16px;font-size:11px;color:var(--text-dim);flex-shrink:0;}
+/* ══ Status bar ══ */
+.status{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:8px 18px;display:flex;flex-wrap:wrap;gap:14px;
+  font-size:11px;color:var(--dim);flex-shrink:0;
+}
 .stat{display:flex;align-items:center;gap:4px;}
 .sv{color:var(--accent2);font-weight:700;}
 
-footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 20px;font-size:11px;color:var(--text-dim);text-align:center;flex-shrink:0;}
+/* ══ Footer ══ */
+footer{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:8px 20px;font-size:11px;color:var(--dim);text-align:center;flex-shrink:0;
+}
 
-@media(max-width:720px){
-  .layout{flex-direction:column;}
-  .sidebar{width:100%;min-width:unset;max-height:55vh;}
-  .main{min-height:300px;}
+/* ════════════════════════════════════
+   ══ 手機版 RWD（≤ 700px）══
+   ════════════════════════════════════ */
+@media(max-width:700px){
+  :root{ --sb:100%; }
+
+  /* 桌機 layout 整個隱藏 → 換手機佈局 */
+  .layout{ display:block; position:relative; height:calc(100vh - 60px - 44px); }
+
+  /* 主預覽區佔滿 */
+  .main{
+    position:absolute;inset:0;
+    height:100%;
+  }
+  .canvas-wrap{ padding:12px; max-height:calc(100% - 48px - 36px); }
+  canvas{ max-height:100%; }
+
+  /* Tab 列固定底部 */
+  .tab-bar{
+    position:absolute;bottom:0;left:0;right:0;
+    z-index:20;padding:0 8px;
+    border-bottom:none;border-top:1px solid var(--border);
+  }
+  .tab{ padding:10px 12px;font-size:11px; }
+
+  /* 側欄變成底部抽屜 */
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;
+    width:100%;min-width:unset;max-height:72vh;
+    z-index:30;
+    border-right:none;border-top:2px solid var(--accent);
+    border-radius:16px 16px 0 0;
+    transform:translateY(100%);
+    transition:transform .35s cubic-bezier(.32,0,.15,1);
+    overflow-y:auto;
+  }
+  .sidebar.open{ transform:translateY(0); }
+
+  /* 抽屜把手 */
+  .drawer-handle{
+    display:flex;flex-direction:column;align-items:center;
+    padding:10px 0 6px;cursor:pointer;user-select:none;
+    position:sticky;top:0;background:var(--surface);z-index:2;
+    border-radius:16px 16px 0 0;
+  }
+  .drawer-bar{
+    width:40px;height:4px;background:var(--border);
+    border-radius:4px;margin-bottom:6px;
+  }
+  .drawer-label{font-size:12px;font-weight:700;color:var(--text);}
+
+  /* 浮動開啟按鈕 */
+  .fab{
+    display:flex;
+    position:fixed;bottom:56px;right:16px;z-index:25;
+    background:var(--accent);color:#fff;
+    width:52px;height:52px;border-radius:50%;
+    border:none;font-size:22px;cursor:pointer;
+    align-items:center;justify-content:center;
+    box-shadow:0 4px 20px rgba(233,69,96,.5);
+    transition:all .2s;
+  }
+  .fab:active{ transform:scale(.92); }
+
+  /* 遮罩 */
+  .overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.5);z-index:29;
+  }
+  .overlay.show{ display:block; }
+
+  /* 步驟內容間距縮小 */
+  .step{ padding:14px 16px; }
+  .btn{ min-height:52px;font-size:15px; }
+  input[type=number]{ font-size:16px; /* iOS 不自動縮放 */ }
+  select{ font-size:16px; }
+
+  /* 狀態列精簡 */
+  .status{ gap:10px;font-size:10px;padding:6px 14px; }
+
+  /* header 精簡 */
+  header h1{ font-size:14px; }
+  header p { display:none; }
+}
+
+/* ══ 平板（701–1024px）══ */
+@media(min-width:701px) and (max-width:1024px){
+  :root{ --sb:280px; }
+  .drawer-handle,.fab,.overlay{ display:none !important; }
+}
+
+/* 隱藏抽屜相關元素於桌機 */
+@media(min-width:701px){
+  .drawer-handle,.fab,.overlay{ display:none !important; }
+  .sidebar{ transform:none !important; }
 }
 </style>
 </head>
 <body>
 
+<!-- ══ Header ══ -->
 <header>
-  <div class="hicon">🔥</div>
+  <div class="hico">🔥</div>
   <div>
     <h1>車城國小｜雷射雕刻半色調工具</h1>
-    <p>支援去背 · PNG 輸出 · SVG 向量輸出（適用 LightBurn / LaserGRBL）</p>
+    <p>去背 · PNG 輸出 · SVG 向量（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="hbadge">v2.0</div>
+  <div class="hbadge">v2.1</div>
 </header>
 
+<!-- ══ 遮罩（手機） ══ -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ══ Layout ══ -->
 <div class="layout">
 
-  <!-- ══ Sidebar ══ -->
-  <div class="sidebar">
+  <!-- ──── Sidebar ──── -->
+  <div class="sidebar" id="sidebar">
 
-    <!-- 步驟 1 -->
+    <!-- 抽屜把手（僅手機顯示） -->
+    <div class="drawer-handle" id="drawerHandle">
+      <div class="drawer-bar"></div>
+      <div class="drawer-label">⚙️ 設定面板</div>
+    </div>
+
+    <!-- 步驟 1：匯入 -->
     <div class="step">
       <div class="step-hd">
-        <div class="step-num">1</div>
-        <div class="step-title">匯入影像<small>點擊或拖曳圖片至上傳區</small></div>
+        <div class="snum">1</div>
+        <div class="stit">匯入影像<small>點擊或拖曳圖片至此</small></div>
       </div>
       <div class="upload-box" id="uploadBox">
         <div class="ico">🖼️</div>
         <div class="main">點擊上傳 或拖曳圖片至此</div>
-        <div class="sub">支援 JPG、PNG、WEBP、GIF 等格式</div>
+        <div class="sub">JPG · PNG · WEBP · GIF</div>
       </div>
       <input type="file" id="fileInput" accept="image/*">
-      <div class="img-info" id="imgInfo">
+      <div class="img-card" id="imgCard">
         <img class="img-thumb" id="imgThumb" src="" alt="">
         <div class="img-meta" id="imgMeta">—</div>
       </div>
+
+      <!-- 去背來源狀態提示 -->
+      <div class="alert info show" id="alertAlpha" style="display:none;">
+        ✅ 偵測到透明背景（Alpha 通道），將直接使用原始去背遮罩。
+      </div>
     </div>
 
-    <!-- 步驟 2 -->
+    <!-- 步驟 2：去背 -->
     <div class="step">
       <div class="step-hd">
-        <div class="step-num">2</div>
-        <div class="step-title">
-          去背設定&nbsp;<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:3px;vertical-align:middle;">NEW</span>
-          <small>可移除背景，讓雷射只雕刻主體</small>
+        <div class="snum">2</div>
+        <div class="stit">
+          去背設定
+          <span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:3px;vertical-align:middle;">NEW</span>
+          <small>移除背景，讓雷射只雕刻主體</small>
         </div>
       </div>
+
       <div class="tog-row">
-        <span class="tog-lbl">啟用去背</span>
+        <div class="tog-lbl">啟用去背<small id="bgModeHint">— 選擇下方去背模式</small></div>
         <label class="sw"><input type="checkbox" id="bgOn"><span class="sw-t"></span></label>
       </div>
+
       <div class="sub-panel" id="bgPanel">
         <div class="ctrl">
           <label>去背模式</label>
           <select id="bgMode">
-            <option value="bright">移除亮色背景（白 / 淺色）</option>
-            <option value="dark">移除暗色背景（黑 / 深色）</option>
+            <option value="alpha">使用原始透明度（PNG Alpha）</option>
+            <option value="bright">移除亮色背景（白 / 淺色底）</option>
+            <option value="dark">移除暗色背景（黑 / 深色底）</option>
             <option value="threshold">手動閾值去背</option>
           </select>
         </div>
@@ -201,19 +441,26 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 
           <input type="range" id="threshSl" min="50" max="255" value="220">
           <div class="tip">高於閾值的像素視為背景並移除</div>
         </div>
-        <div class="ctrl">
+        <div class="ctrl" id="featherRow">
           <label>邊緣羽化 <span class="val" id="featherLbl">2 px</span></label>
           <input type="range" id="featherSl" min="0" max="10" value="2">
         </div>
+
+        <!-- 模式說明 -->
+        <div class="alert show" id="modeAlert" style="margin-top:8px;"></div>
       </div>
-      <div class="tip">💡 去背失敗時，可先至 <strong><a href="https://www.remove.bg" target="_blank">remove.bg</a></strong> 手動去背後再上傳 PNG。</div>
+
+      <div class="tip">
+        💡 已去背 PNG 請選「<strong>使用原始透明度</strong>」；<br>
+        未去背圖片可先至 <strong><a href="https://www.remove.bg" target="_blank">remove.bg</a></strong> 去背後再上傳。
+      </div>
     </div>
 
-    <!-- 步驟 3 -->
+    <!-- 步驟 3：半色調參數 -->
     <div class="step">
       <div class="step-hd">
-        <div class="step-num">3</div>
-        <div class="step-title">半色調參數<small>調整雕刻密度與點點大小</small></div>
+        <div class="snum">3</div>
+        <div class="stit">半色調參數<small>調整雕刻密度與點點大小</small></div>
       </div>
       <div class="ctrl">
         <label>點陣格距（px）<span class="val" id="gridLbl">5 px</span></label>
@@ -228,26 +475,26 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 
         <input type="range" id="contrastSl" min="-100" max="100" value="0">
       </div>
       <div class="tog-row" style="margin-top:10px">
-        <span class="tog-lbl">反相輸出（暗底亮點）</span>
+        <div class="tog-lbl">反相輸出<small>暗底亮點（適合黑色雕刻材料）</small></div>
         <label class="sw"><input type="checkbox" id="invertSw"><span class="sw-t"></span></label>
       </div>
     </div>
 
-    <!-- 步驟 4 -->
+    <!-- 步驟 4：輸出尺寸 -->
     <div class="step">
       <div class="step-hd">
-        <div class="step-num">4</div>
-        <div class="step-title">輸出尺寸與解析度<small>設定雷射雕刻區域大小</small></div>
+        <div class="snum">4</div>
+        <div class="stit">輸出尺寸與解析度<small>設定雷射雕刻區域大小</small></div>
       </div>
       <div class="dim-g">
         <div class="ctrl" style="margin-bottom:0">
           <label>寬度（cm）</label>
-          <input type="number" id="widthCm" value="10" min="1" max="200" step="0.1">
+          <input type="number" id="widthCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
         </div>
         <div class="sep">×</div>
         <div class="ctrl" style="margin-bottom:0">
           <label>高度（cm）</label>
-          <input type="number" id="heightCm" value="10" min="1" max="200" step="0.1">
+          <input type="number" id="heightCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
         </div>
       </div>
       <label class="lock-lbl">
@@ -257,26 +504,28 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 
         <label>解析度（DPI）<span class="val" id="dpiLbl">300</span></label>
         <input type="range" id="dpiSl" min="72" max="600" value="300">
       </div>
-      <div style="font-size:10px;color:var(--text-dim);margin-top:4px" id="pxInfo">— × — px</div>
+      <div style="font-size:10px;color:var(--dim);margin-top:4px" id="pxInfo">— × — px</div>
     </div>
 
-    <!-- 步驟 5 -->
+    <!-- 步驟 5：產生與下載 -->
     <div class="step">
       <div class="step-hd">
-        <div class="step-num">5</div>
-        <div class="step-title">產生與下載<small>PNG 供列印；SVG 供雷射切割機</small></div>
+        <div class="snum">5</div>
+        <div class="stit">產生與下載<small>PNG 供列印；SVG 供雷射切割機</small></div>
       </div>
       <button class="btn btn-main" id="renderBtn" disabled>⚡ 開始產生半色調</button>
       <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill"></div></div>
       <div class="prog-lbl" id="progLbl">處理中…</div>
       <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG 雕刻圖</button>
-      <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（LightBurn / LaserGRBL 用）</button>
-      <div class="tip"><strong>SVG 格式</strong>：每個圓點為獨立向量，可直接匯入雷射雕刻軟體，精度優於點陣圖。</div>
+      <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（LightBurn / LaserGRBL）</button>
+      <div class="tip">
+        <strong>SVG 格式</strong>：每個圓點為獨立向量，可直接匯入雷射雕刻軟體，精度優於點陣圖。
+      </div>
     </div>
 
-  </div>
+  </div><!-- /sidebar -->
 
-  <!-- ══ Main ══ -->
+  <!-- ──── Main area ──── -->
   <div class="main">
     <div class="tab-bar">
       <button class="tab active" id="tabH">半色調預覽</button>
@@ -284,9 +533,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 
       <button class="tab" id="tabB">去背預覽</button>
     </div>
     <div class="canvas-wrap" id="canvasWrap">
-      <div class="empty" id="emptyEl">
+      <div class="empty-state" id="emptyEl">
         <div class="eico">🔥</div>
-        <p>請先在左側<strong style="color:var(--text)">步驟 1</strong> 上傳圖片<br>支援拖曳放置</p>
+        <p>請先上傳圖片<br>（步驟 1）</p>
       </div>
       <canvas id="cH"></canvas>
       <canvas id="cO"></canvas>
@@ -300,25 +549,65 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 
     </div>
   </div>
 
-</div>
+</div><!-- /layout -->
+
+<!-- FAB（手機浮動按鈕） -->
+<button class="fab" id="fab" aria-label="開啟設定">⚙️</button>
 
 <footer>車城國小資訊老師 @ Google Gemini 協作設計</footer>
 
+<!-- ════════════════ JS ════════════════ -->
 <script>
 'use strict';
-// ── refs ──
+
+/* ── refs ── */
 const $=id=>document.getElementById(id);
-const uploadBox=$('uploadBox'),fileInput=$('fileInput'),imgInfo=$('imgInfo'),imgThumb=$('imgThumb'),imgMeta=$('imgMeta');
-const bgOn=$('bgOn'),bgPanel=$('bgPanel'),bgMode=$('bgMode'),threshRow=$('threshRow'),threshSl=$('threshSl'),threshLbl=$('threshLbl'),featherSl=$('featherSl'),featherLbl=$('featherLbl');
-const gridSl=$('gridSl'),gridLbl=$('gridLbl'),scaleSl=$('scaleSl'),scaleLbl=$('scaleLbl'),contrastSl=$('contrastSl'),contrastLbl=$('contrastLbl'),invertSw=$('invertSw');
-const widthCm=$('widthCm'),heightCm=$('heightCm'),lockAR=$('lockAR'),dpiSl=$('dpiSl'),dpiLbl=$('dpiLbl'),pxInfo=$('pxInfo');
-const renderBtn=$('renderBtn'),dlPng=$('dlPng'),dlSvg=$('dlSvg'),progWrap=$('progWrap'),progFill=$('progFill'),progLbl=$('progLbl');
-const tabH=$('tabH'),tabO=$('tabO'),tabB=$('tabB'),emptyEl=$('emptyEl'),cH=$('cH'),cO=$('cO'),cB=$('cB');
-const sPx=$('sPx'),sDots=$('sDots'),sGrid=$('sGrid'),sSvgWrap=$('sSvgWrap'),sSvg=$('sSvg');
+const uploadBox=$('uploadBox'), fileInput=$('fileInput');
+const imgCard=$('imgCard'), imgThumb=$('imgThumb'), imgMeta=$('imgMeta');
+const alertAlpha=$('alertAlpha');
+const bgOn=$('bgOn'), bgPanel=$('bgPanel'), bgMode=$('bgMode');
+const threshRow=$('threshRow'), threshSl=$('threshSl'), threshLbl=$('threshLbl');
+const featherRow=$('featherRow'), featherSl=$('featherSl'), featherLbl=$('featherLbl');
+const bgModeHint=$('bgModeHint'), modeAlert=$('modeAlert');
+const gridSl=$('gridSl'), gridLbl=$('gridLbl');
+const scaleSl=$('scaleSl'), scaleLbl=$('scaleLbl');
+const contrastSl=$('contrastSl'), contrastLbl=$('contrastLbl');
+const invertSw=$('invertSw');
+const widthCm=$('widthCm'), heightCm=$('heightCm'), lockAR=$('lockAR');
+const dpiSl=$('dpiSl'), dpiLbl=$('dpiLbl'), pxInfo=$('pxInfo');
+const renderBtn=$('renderBtn'), dlPng=$('dlPng'), dlSvg=$('dlSvg');
+const progWrap=$('progWrap'), progFill=$('progFill'), progLbl=$('progLbl');
+const tabH=$('tabH'), tabO=$('tabO'), tabB=$('tabB');
+const emptyEl=$('emptyEl'), cH=$('cH'), cO=$('cO'), cB=$('cB');
+const sPx=$('sPx'), sDots=$('sDots'), sGrid=$('sGrid'), sSvgWrap=$('sSvgWrap'), sSvg=$('sSvg');
+const sidebar=$('sidebar'), overlay=$('overlay'), fab=$('fab'), drawerHandle=$('drawerHandle');
 
-let origImg=null,origW=0,origH=0,ar=1,svgData=null;
+/* ── state ── */
+let origImg=null, origW=0, origH=0, ar=1, svgData=null;
+let hasAlpha=false;   // 原圖是否有 alpha 通道
 
-// ── helpers ──
+/* ════════ 手機抽屜邏輯 ════════ */
+function isMobile(){ return window.innerWidth<=700; }
+
+function openDrawer(){
+  sidebar.classList.add('open');
+  overlay.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(){
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+  document.body.style.overflow='';
+}
+
+fab.addEventListener('click', openDrawer);
+overlay.addEventListener('click', closeDrawer);
+drawerHandle.addEventListener('click', closeDrawer);
+
+/* 產生後自動關閉抽屜 */
+function autoCloseDrawer(){ if(isMobile()) closeDrawer(); }
+
+/* ════════ Helpers ════════ */
 const cm2px=(cm,dpi)=>Math.round(parseFloat(cm)*dpi/2.54);
 const fmtB=b=>b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
 const tick=()=>new Promise(r=>requestAnimationFrame(r));
@@ -332,31 +621,71 @@ function setProgress(p,lbl=''){
   const show=p>0&&p<100;
   progWrap.classList.toggle('show',show);
   progLbl.classList.toggle('show',show);
-  if(show)progLbl.textContent=lbl||'處理中…';
+  if(show) progLbl.textContent=lbl||'處理中…';
 }
 
-// ── upload ──
+/* ── 檢查是否有 alpha 通道 ── */
+function checkAlpha(img){
+  const c=document.createElement('canvas');
+  c.width=Math.min(img.width,200); c.height=Math.min(img.height,200);
+  const ctx=c.getContext('2d');
+  ctx.drawImage(img,0,0,c.width,c.height);
+  const d=ctx.getImageData(0,0,c.width,c.height).data;
+  for(let i=3;i<d.length;i+=4){
+    if(d[i]<200) return true;   // 任一像素半透明 → 有 alpha
+  }
+  return false;
+}
+
+/* ════════ Upload ════════ */
 uploadBox.addEventListener('click',()=>fileInput.click());
 uploadBox.addEventListener('dragover',e=>{e.preventDefault();uploadBox.classList.add('over');});
 uploadBox.addEventListener('dragleave',()=>uploadBox.classList.remove('over'));
-uploadBox.addEventListener('drop',e=>{e.preventDefault();uploadBox.classList.remove('over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadFile(f);});
-fileInput.addEventListener('change',()=>{if(fileInput.files[0])loadFile(fileInput.files[0]);});
+uploadBox.addEventListener('drop',e=>{
+  e.preventDefault();uploadBox.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')) loadFile(f);
+});
+fileInput.addEventListener('change',()=>{
+  if(fileInput.files[0]) loadFile(fileInput.files[0]);
+});
 
 function loadFile(f){
   const r=new FileReader();
   r.onload=ev=>{
     const img=new Image();
     img.onload=()=>{
-      origImg=img;origW=img.width;origH=img.height;ar=origW/origH;
-      cO.width=origW;cO.height=origH;
+      origImg=img; origW=img.width; origH=img.height; ar=origW/origH;
+
+      /* 畫原始 canvas */
+      cO.width=origW; cO.height=origH;
       cO.getContext('2d').drawImage(img,0,0);
+
+      /* 偵測 alpha */
+      hasAlpha=checkAlpha(img);
+
+      /* 若有 alpha → 自動選 alpha 模式並給提示 */
+      alertAlpha.style.display=hasAlpha?'block':'none';
+      if(hasAlpha){
+        bgMode.value='alpha';
+        updModeAlert();
+      }
+
+      /* 圖片資訊卡 */
       imgThumb.src=ev.target.result;
-      imgMeta.innerHTML=`<strong>${origW}×${origH}</strong><br>${f.type.replace('image/','').toUpperCase()} · ${(f.size/1024).toFixed(0)} KB`;
-      imgInfo.style.display='flex';
+      imgMeta.innerHTML=
+        `<strong>${origW}×${origH}</strong><br>`+
+        `${f.type.replace('image/','').toUpperCase()} · ${(f.size/1024).toFixed(0)} KB`+
+        (hasAlpha?'<br><span style="color:var(--green)">✅ 含透明背景</span>':'');
+      imgCard.style.display='flex';
+
+      /* 預設尺寸（300 dpi 換算） */
       widthCm.value=(origW/300*2.54).toFixed(1);
       heightCm.value=(origH/300*2.54).toFixed(1);
       updPxInfo();
-      renderBtn.disabled=false;dlPng.disabled=true;dlSvg.disabled=true;svgData=null;
+
+      renderBtn.disabled=false;
+      dlPng.disabled=true; dlSvg.disabled=true; svgData=null;
       sSvgWrap.style.display='none';
       emptyEl.style.display='none';
       switchTab('original');
@@ -367,39 +696,81 @@ function loadFile(f){
   r.readAsDataURL(f);
 }
 
-// ── aspect ──
-widthCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)heightCm.value=(parseFloat(widthCm.value)/ar).toFixed(1);updPxInfo();});
-heightCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)widthCm.value=(parseFloat(heightCm.value)*ar).toFixed(1);updPxInfo();});
-
-// ── sliders ──
-dpiSl.addEventListener('input',()=>{dpiLbl.textContent=dpiSl.value;updPxInfo();});
+/* ════════ Sliders & controls ════════ */
+widthCm.addEventListener('input',()=>{
+  if(lockAR.checked&&origImg) heightCm.value=(parseFloat(widthCm.value)/ar).toFixed(1);
+  updPxInfo();
+});
+heightCm.addEventListener('input',()=>{
+  if(lockAR.checked&&origImg) widthCm.value=(parseFloat(heightCm.value)*ar).toFixed(1);
+  updPxInfo();
+});
+dpiSl.addEventListener('input',()=>{dpiLbl.textContent=dpiSl.value; updPxInfo();});
 gridSl.addEventListener('input',()=>gridLbl.textContent=gridSl.value+' px');
 scaleSl.addEventListener('input',()=>scaleLbl.textContent=(+scaleSl.value).toFixed(2)+' ×');
 contrastSl.addEventListener('input',()=>contrastLbl.textContent=contrastSl.value);
-threshSl.addEventListener('input',()=>{threshLbl.textContent=threshSl.value;updNoBg();});
-featherSl.addEventListener('input',()=>{featherLbl.textContent=featherSl.value+' px';updNoBg();});
+threshSl.addEventListener('input',()=>{threshLbl.textContent=threshSl.value; updNoBg();});
+featherSl.addEventListener('input',()=>{featherLbl.textContent=featherSl.value+' px'; updNoBg();});
 
-// ── bg toggle ──
-bgOn.addEventListener('change',()=>{bgPanel.classList.toggle('open',bgOn.checked);if(origImg)updNoBg();});
-bgMode.addEventListener('change',()=>{threshRow.style.display=bgMode.value==='threshold'?'block':'none';if(origImg)updNoBg();});
+/* ════════ BG toggle ════════ */
+bgOn.addEventListener('change',()=>{
+  bgPanel.classList.toggle('open',bgOn.checked);
+  if(origImg) updNoBg();
+});
+bgMode.addEventListener('change',()=>{
+  threshRow.style.display=bgMode.value==='threshold'?'block':'none';
+  featherRow.style.display=bgMode.value==='alpha'?'none':'block';  // alpha 模式不需羽化
+  updModeAlert();
+  if(origImg) updNoBg();
+});
 
-// ── alpha mask ──
-function buildMask(src,mode,thresh,feather){
-  const{data:d,width:w,height:h}=src;
+function updModeAlert(){
+  const hints={
+    alpha:'✅ 使用 PNG 原始透明度作為遮罩，效果最佳。已去背圖片請使用此模式。',
+    bright:'⚠️ 偵測亮色（白/淺色）背景。若主體也有亮色區域，可能被一同移除。',
+    dark:'⚠️ 偵測暗色（黑/深色）背景。請確認背景顏色符合此描述。',
+    threshold:'⚠️ 手動設定閾值。高於閾值的亮度視為背景移除。'
+  };
+  const v=bgMode.value;
+  modeAlert.textContent=hints[v]||'';
+  modeAlert.className='alert show '+(v==='alpha'?'info':'');
+}
+updModeAlert();
+
+/* ════════ Alpha mask ════════ */
+function buildMask(srcImgData, mode, thresh, feather){
+  const{data:d,width:w,height:h}=srcImgData;
   const a=new Float32Array(w*h);
+
   for(let i=0;i<w*h;i++){
+    const alpha_src=d[i*4+3]; // 原始 alpha
     const br=d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114;
-    let k;
-    if(mode==='bright')     k=br>230?0:br>200?(230-br)/30:1;
-    else if(mode==='dark')  k=br<20?0:br<50?(br-20)/30:1;
-    else                    k=br>=thresh?0:br>=thresh-20?(thresh-br)/20:1;
-    a[i]=k;
+
+    let keep;
+    if(mode==='alpha'){
+      /* ★ 核心修正：直接使用原始 alpha 通道 ★ */
+      keep=alpha_src/255;
+    } else if(mode==='bright'){
+      /* 亮色背景去除 —— 但先確認原 alpha 不是透明 */
+      if(alpha_src<30){ keep=0; }
+      else{ keep=br>230?0:br>200?(230-br)/30:1; }
+    } else if(mode==='dark'){
+      if(alpha_src<30){ keep=0; }
+      else{ keep=br<20?0:br<50?(br-20)/30:1; }
+    } else{
+      /* threshold */
+      if(alpha_src<30){ keep=0; }
+      else{ keep=br>=thresh?0:br>=thresh-20?(thresh-br)/20:1; }
+    }
+    a[i]=keep;
   }
-  if(feather>0){
+
+  /* 羽化（alpha 模式跳過） */
+  if(feather>0 && mode!=='alpha'){
     const b=new Float32Array(w*h);
-    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
       let s=0,c=0;
-      for(let dy=-feather;dy<=feather;dy++)for(let dx=-feather;dx<=feather;dx++){
+      for(let dy=-feather;dy<=feather;dy++) for(let dx=-feather;dx<=feather;dx++){
         const nx=x+dx,ny=y+dy;
         if(nx>=0&&nx<w&&ny>=0&&ny<h){s+=a[ny*w+nx];c++;}
       }
@@ -410,22 +781,30 @@ function buildMask(src,mode,thresh,feather){
   return a;
 }
 
+/* ════════ No-BG preview ════════ */
 function updNoBg(){
   if(!origImg)return;
   const src=cO.getContext('2d').getImageData(0,0,origW,origH);
-  cB.width=origW;cB.height=origH;
+  cB.width=origW; cB.height=origH;
   const ctx=cB.getContext('2d');
   const out=ctx.createImageData(origW,origH);
-  if(!bgOn.checked){out.data.set(src.data);ctx.putImageData(out,0,0);return;}
+
+  if(!bgOn.checked){
+    out.data.set(src.data);
+    ctx.putImageData(out,0,0);
+    return;
+  }
   const mask=buildMask(src,bgMode.value,+threshSl.value,+featherSl.value);
   for(let i=0;i<origW*origH;i++){
-    out.data[i*4]=src.data[i*4];out.data[i*4+1]=src.data[i*4+1];out.data[i*4+2]=src.data[i*4+2];
+    out.data[i*4]  =src.data[i*4];
+    out.data[i*4+1]=src.data[i*4+1];
+    out.data[i*4+2]=src.data[i*4+2];
     out.data[i*4+3]=Math.round(mask[i]*255);
   }
   ctx.putImageData(out,0,0);
 }
 
-// ── contrast ──
+/* ════════ Contrast ════════ */
 function applyContrast(data,c){
   const f=(259*(c+255))/(255*(259-c));
   for(let i=0;i<data.length;i+=4){
@@ -435,103 +814,149 @@ function applyContrast(data,c){
   }
 }
 
-// ── render ──
-renderBtn.addEventListener('click',doRender);
+/* ════════ Main render ════════ */
+renderBtn.addEventListener('click', doRender);
+
 async function doRender(){
   if(!origImg)return;
-  renderBtn.disabled=true;setProgress(5,'讀取參數…');await tick();
-  const dpi=+dpiSl.value,outW=cm2px(widthCm.value,dpi),outH=cm2px(heightCm.value,dpi);
-  const grid=+gridSl.value,scale=+scaleSl.value,contrast=+contrastSl.value;
-  const invert=invertSw.checked,doBg=bgOn.checked;
+  renderBtn.disabled=true;
+  setProgress(5,'讀取參數…');
+  await tick();
+  autoCloseDrawer();
 
-  const off=document.createElement('canvas');off.width=outW;off.height=outH;
-  const octx=off.getContext('2d');octx.drawImage(origImg,0,0,outW,outH);
+  const dpi=+dpiSl.value;
+  const outW=cm2px(widthCm.value,dpi), outH=cm2px(heightCm.value,dpi);
+  const grid=+gridSl.value, scale=+scaleSl.value, contrast=+contrastSl.value;
+  const invert=invertSw.checked, doBg=bgOn.checked;
+
+  /* 縮放 */
+  const off=document.createElement('canvas');
+  off.width=outW; off.height=outH;
+  const octx=off.getContext('2d');
+  octx.drawImage(origImg,0,0,outW,outH);
   const imgData=octx.getImageData(0,0,outW,outH);
-  if(contrast)applyContrast(imgData.data,contrast);
+  if(contrast) applyContrast(imgData.data,contrast);
 
+  /* alpha mask */
   let mask=null;
-  if(doBg)mask=buildMask(imgData,bgMode.value,+threshSl.value,+featherSl.value);
+  if(doBg) mask=buildMask(imgData,bgMode.value,+threshSl.value,+featherSl.value);
 
-  setProgress(25,'灰階化…');await tick();
+  setProgress(25,'灰階化…');
+  await tick();
+
+  /* 灰階 */
   const gray=new Uint8Array(outW*outH);
-  for(let i=0;i<outW*outH;i++)gray[i]=(imgData.data[i*4]*.299+imgData.data[i*4+1]*.587+imgData.data[i*4+2]*.114)|0;
+  for(let i=0;i<outW*outH;i++)
+    gray[i]=(imgData.data[i*4]*.299+imgData.data[i*4+1]*.587+imgData.data[i*4+2]*.114)|0;
 
-  cH.width=outW;cH.height=outH;
+  /* 輸出 canvas */
+  cH.width=outW; cH.height=outH;
   const ctx=cH.getContext('2d');
-  ctx.fillStyle=invert?'#000':'#fff';ctx.fillRect(0,0,outW,outH);
+  ctx.fillStyle=invert?'#000':'#fff';
+  ctx.fillRect(0,0,outW,outH);
 
-  const half=grid/2,maxR=half*scale;
-  const cols=Math.ceil(outW/grid),rows=Math.ceil(outH/grid),total=cols*rows;
-  let parts=[],dots=0,bi=0;
-  const BATCH=600;
+  const half=grid/2, maxR=half*scale;
+  const cols=Math.ceil(outW/grid), rows=Math.ceil(outH/grid), total=cols*rows;
+  let parts=[], dots=0, bi=0;
 
   setProgress(35,'繪製圓點…');
+
   function drawBatch(){
-    const end=Math.min(bi+BATCH,total);
+    const end=Math.min(bi+600,total);
     for(;bi<end;bi++){
-      const col=bi%cols,row=Math.floor(bi/cols);
-      const cx=col*grid+half,cy=row*grid+half;
-      if(cx>=outW||cy>=outH)continue;
+      const col=bi%cols, row=Math.floor(bi/cols);
+      const cx=col*grid+half, cy=row*grid+half;
+      if(cx>=outW||cy>=outH) continue;
+
+      /* ★ 去背遮罩判斷 ★ */
       if(doBg&&mask){
-        const mx=Math.min(Math.round(cx),outW-1),my=Math.min(Math.round(cy),outH-1);
-        if(mask[my*outW+mx]<0.1)continue;
+        const mx=Math.min(Math.round(cx),outW-1);
+        const my=Math.min(Math.round(cy),outH-1);
+        if(mask[my*outW+mx]<0.05) continue;   // 幾乎透明 → 跳過
       }
+
+      /* 3×3 亮度取樣 */
       let s=0,c=0;
-      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
         const px=Math.min(outW-1,Math.max(0,Math.round(cx)+dx));
         const py=Math.min(outH-1,Math.max(0,Math.round(cy)+dy));
-        s+=gray[py*outW+px];c++;
+        /* 若取樣點在透明區，用加權 0 */
+        if(doBg&&mask&&mask[py*outW+px]<0.05) continue;
+        s+=gray[py*outW+px]; c++;
       }
+      if(c===0) continue;
       const norm=invert?(s/c)/255:1-(s/c)/255;
       const r=Math.min(maxR,norm*maxR);
-      if(r<0.5)continue;
-      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
-      ctx.fillStyle=invert?'#fff':'#000';ctx.fill();
+      if(r<0.5) continue;
+
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle=invert?'#fff':'#000';
+      ctx.fill();
+
       parts.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(2)}"/>`);
       dots++;
     }
     setProgress(35+Math.round(bi/total*60),`繪製中 ${Math.round(bi/total*100)}%`);
-    if(bi<total)requestAnimationFrame(drawBatch);
+    if(bi<total) requestAnimationFrame(drawBatch);
     else finalize(outW,outH,dots,parts,grid,dpi);
   }
   requestAnimationFrame(drawBatch);
 }
 
 function finalize(w,h,dots,parts,grid,dpi){
-  svgData=`<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 SVG v2.0 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+  svgData=
+`<?xml version="1.0" encoding="UTF-8"?>
+<!-- 車城國小 雷射雕刻半色調 SVG v2.1 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <rect width="${w}" height="${h}" fill="white"/>
   <g fill="black">${parts.join('')}</g>
 </svg>`;
-  sPx.textContent=`${w}×${h} px`;sDots.textContent=dots.toLocaleString();sGrid.textContent=`${grid} px`;
-  const sz=new Blob([svgData]).size;sSvgWrap.style.display='';sSvg.textContent=fmtB(sz);
-  setProgress(100);dlPng.disabled=false;dlSvg.disabled=false;renderBtn.disabled=false;
-  emptyEl.style.display='none';switchTab('halftone');
+
+  sPx.textContent=`${w}×${h} px`;
+  sDots.textContent=dots.toLocaleString();
+  sGrid.textContent=`${grid} px`;
+  const sz=new Blob([svgData]).size;
+  sSvgWrap.style.display=''; sSvg.textContent=fmtB(sz);
+
+  setProgress(100);
+  dlPng.disabled=false; dlSvg.disabled=false;
+  renderBtn.disabled=false;
+  emptyEl.style.display='none';
+  switchTab('halftone');
 }
 
-// ── download ──
+/* ════════ Download ════════ */
 dlPng.addEventListener('click',()=>{
-  cH.toBlob(blob=>{const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'halftone-laser.png'});a.click();URL.revokeObjectURL(a.href);},'image/png');
+  cH.toBlob(blob=>{
+    const a=Object.assign(document.createElement('a'),{
+      href:URL.createObjectURL(blob), download:'halftone-laser.png'
+    });
+    a.click(); URL.revokeObjectURL(a.href);
+  },'image/png');
 });
 dlSvg.addEventListener('click',()=>{
   if(!svgData)return;
-  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([svgData],{type:'image/svg+xml'})),download:'halftone-laser.svg'});
-  a.click();URL.revokeObjectURL(a.href);
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob([svgData],{type:'image/svg+xml'})),
+    download:'halftone-laser.svg'
+  });
+  a.click(); URL.revokeObjectURL(a.href);
 });
 
-// ── tabs ──
+/* ════════ Tabs ════════ */
 function switchTab(tab){
   [cH,cO,cB].forEach(c=>c.style.display='none');
   [tabH,tabO,tabB].forEach(b=>b.classList.remove('active'));
-  if(tab==='halftone'){cH.style.display='block';tabH.classList.add('active');}
-  else if(tab==='original'){cO.style.display='block';tabO.classList.add('active');}
-  else{cB.style.display='block';tabB.classList.add('active');updNoBg();}
+  if(tab==='halftone'){cH.style.display='block'; tabH.classList.add('active');}
+  else if(tab==='original'){cO.style.display='block'; tabO.classList.add('active');}
+  else{cB.style.display='block'; tabB.classList.add('active'); updNoBg();}
 }
 tabH.addEventListener('click',()=>{if(origImg)switchTab('halftone');});
 tabO.addEventListener('click',()=>{if(origImg)switchTab('original');});
 tabB.addEventListener('click',()=>{if(origImg)switchTab('nobg');});
 
+/* ════════ Init ════════ */
 updPxInfo();
 </script>
 </body>

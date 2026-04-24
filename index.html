@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車城國小｜雷射雕刻半色調工具</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+:root {
+  --bg:        #1a1a2e;
+  --surface:   #16213e;
+  --panel:     #0f3460;
+  --accent:    #e94560;
+  --accent2:   #f5a623;
+  --text:      #e0e0e0;
+  --text-dim:  #8892a4;
+  --border:    #2a3a5c;
+  --success:   #4ade80;
+  --radius:    10px;
+  --sidebar-w: 340px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* Header */
+header{background:var(--surface);border-bottom:3px solid var(--accent);padding:14px 24px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.hicon{font-size:26px;background:var(--accent);width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+header h1{font-size:16px;font-weight:700;color:#fff;line-height:1.3;}
+header p{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.hbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+
+/* Layout */
+.layout{display:flex;flex:1;overflow:hidden;min-height:0;}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* Step blocks */
+.step{border-bottom:1px solid var(--border);padding:18px 20px;}
+.step-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.step-num{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-title{font-size:14px;font-weight:700;color:#fff;}
+.step-title small{display:block;font-size:10px;color:var(--text-dim);font-weight:400;margin-top:1px;}
+
+/* Upload */
+.upload-box{border:2px dashed var(--border);border-radius:var(--radius);padding:22px 16px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.02);}
+.upload-box:hover,.upload-box.over{border-color:var(--accent);background:rgba(233,69,96,0.06);}
+.upload-box .ico{font-size:32px;margin-bottom:8px;}
+.upload-box .main{font-size:13px;font-weight:500;color:#fff;}
+.upload-box .sub{font-size:11px;color:var(--text-dim);margin-top:4px;}
+#fileInput{display:none;}
+.img-info{display:none;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:6px;}
+.img-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid var(--border);flex-shrink:0;}
+.img-meta{font-size:11px;color:var(--text-dim);line-height:1.6;}
+.img-meta strong{color:var(--text);}
+
+/* Controls */
+.ctrl{margin-bottom:12px;}
+.ctrl:last-child{margin-bottom:0;}
+.ctrl label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-dim);margin-bottom:5px;}
+.val{font-weight:700;color:var(--accent2);font-size:11px;background:rgba(245,166,35,0.12);padding:1px 7px;border-radius:4px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+input[type=number]{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 12px;font-size:13px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color 0.2s;}
+input[type=number]:focus{border-color:var(--accent);}
+select{width:100%;background:rgba(15,30,60,0.9);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 12px;font-size:12px;outline:none;cursor:pointer;}
+select option{background:#16213e;}
+.dim-g{display:grid;grid-template-columns:1fr 24px 1fr;gap:8px;align-items:end;}
+.sep{text-align:center;font-size:18px;color:var(--text-dim);padding-bottom:7px;}
+.lock-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none;margin-top:8px;}
+.lock-lbl input{accent-color:var(--accent);}
+
+/* Toggle */
+.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tog-row:last-child{margin-bottom:0;}
+.tog-lbl{font-size:12px;color:var(--text);}
+.sw{position:relative;width:42px;height:23px;flex-shrink:0;}
+.sw input{opacity:0;width:0;height:0;}
+.sw-t{position:absolute;inset:0;background:var(--border);border-radius:23px;cursor:pointer;transition:.25s;}
+.sw-t::before{content:'';position:absolute;height:17px;width:17px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;}
+.sw input:checked+.sw-t{background:var(--accent);}
+.sw input:checked+.sw-t::before{transform:translateX(19px);}
+
+/* Sub panel */
+.sub-panel{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;display:none;}
+.sub-panel.open{display:block;}
+
+/* Tip */
+.tip{font-size:10px;color:var(--text-dim);line-height:1.6;margin-top:6px;padding:8px 10px;background:rgba(255,255,255,0.03);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
+.tip strong{color:var(--accent2);}
+.tip a{color:var(--accent2);}
+
+/* Buttons */
+.btn{width:100%;padding:11px 16px;border:none;border-radius:var(--radius);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Noto Sans TC',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+.btn:last-child{margin-bottom:0;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-main{background:var(--accent);color:#fff;}
+.btn-main:not(:disabled):hover{background:#c73652;}
+.btn-dl{background:var(--panel);color:var(--text);border:1px solid var(--border);}
+.btn-dl:not(:disabled):hover{border-color:var(--accent);color:#fff;}
+.btn-svg{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.3);}
+.btn-svg:not(:disabled):hover{background:rgba(74,222,128,.2);}
+
+/* Progress */
+.prog-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin:10px 0 4px;display:none;}
+.prog-wrap.show{display:block;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .1s;width:0%;}
+.prog-lbl{font-size:10px;color:var(--text-dim);text-align:right;display:none;}
+.prog-lbl.show{display:block;}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#111827;}
+
+/* Tabs */
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.tab{padding:11px 14px;font-size:12px;font-weight:500;color:var(--text-dim);background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:'Noto Sans TC',sans-serif;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+
+/* Canvas area */
+.canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px;position:relative;background-color:#1f2937;background-image:linear-gradient(45deg,#374151 25%,transparent 25%),linear-gradient(-45deg,#374151 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#374151 75%),linear-gradient(-45deg,transparent 75%,#374151 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0px;}
+canvas{max-width:100%;max-height:calc(100vh - 200px);border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none;}
+.empty{text-align:center;pointer-events:none;}
+.empty .eico{font-size:72px;opacity:.2;}
+.empty p{color:var(--text-dim);font-size:13px;margin-top:16px;line-height:1.8;}
+
+/* Status */
+.status{background:var(--surface);border-top:1px solid var(--border);padding:8px 20px;display:flex;flex-wrap:wrap;gap:16px;font-size:11px;color:var(--text-dim);flex-shrink:0;}
+.stat{display:flex;align-items:center;gap:4px;}
+.sv{color:var(--accent2);font-weight:700;}
+
+footer{background:var(--surface);border-top:1px solid var(--border);padding:9px 20px;font-size:11px;color:var(--text-dim);text-align:center;flex-shrink:0;}
+
+@media(max-width:720px){
+  .layout{flex-direction:column;}
+  .sidebar{width:100%;min-width:unset;max-height:55vh;}
+  .main{min-height:300px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hicon">🔥</div>
+  <div>
+    <h1>車城國小｜雷射雕刻半色調工具</h1>
+    <p>支援去背 · PNG 輸出 · SVG 向量輸出（適用 LightBurn / LaserGRBL）</p>
+  </div>
+  <div class="hbadge">v2.0</div>
+</header>
+
+<div class="layout">
+
+  <!-- ══ Sidebar ══ -->
+  <div class="sidebar">
+
+    <!-- 步驟 1 -->
+    <div class="step">
+      <div class="step-hd">
+        <div class="step-num">1</div>
+        <div class="step-title">匯入影像<small>點擊或拖曳圖片至上傳區</small></div>
+      </div>
+      <div class="upload-box" id="uploadBox">
+        <div class="ico">🖼️</div>
+        <div class="main">點擊上傳 或拖曳圖片至此</div>
+        <div class="sub">支援 JPG、PNG、WEBP、GIF 等格式</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*">
+      <div class="img-info" id="imgInfo">
+        <img class="img-thumb" id="imgThumb" src="" alt="">
+        <div class="img-meta" id="imgMeta">—</div>
+      </div>
+    </div>
+
+    <!-- 步驟 2 -->
+    <div class="step">
+      <div class="step-hd">
+        <div class="step-num">2</div>
+        <div class="step-title">
+          去背設定&nbsp;<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:3px;vertical-align:middle;">NEW</span>
+          <small>可移除背景，讓雷射只雕刻主體</small>
+        </div>
+      </div>
+      <div class="tog-row">
+        <span class="tog-lbl">啟用去背</span>
+        <label class="sw"><input type="checkbox" id="bgOn"><span class="sw-t"></span></label>
+      </div>
+      <div class="sub-panel" id="bgPanel">
+        <div class="ctrl">
+          <label>去背模式</label>
+          <select id="bgMode">
+            <option value="bright">移除亮色背景（白 / 淺色）</option>
+            <option value="dark">移除暗色背景（黑 / 深色）</option>
+            <option value="threshold">手動閾值去背</option>
+          </select>
+        </div>
+        <div class="ctrl" id="threshRow" style="display:none">
+          <label>亮度閾值 <span class="val" id="threshLbl">220</span></label>
+          <input type="range" id="threshSl" min="50" max="255" value="220">
+          <div class="tip">高於閾值的像素視為背景並移除</div>
+        </div>
+        <div class="ctrl">
+          <label>邊緣羽化 <span class="val" id="featherLbl">2 px</span></label>
+          <input type="range" id="featherSl" min="0" max="10" value="2">
+        </div>
+      </div>
+      <div class="tip">💡 去背失敗時，可先至 <strong><a href="https://www.remove.bg" target="_blank">remove.bg</a></strong> 手動去背後再上傳 PNG。</div>
+    </div>
+
+    <!-- 步驟 3 -->
+    <div class="step">
+      <div class="step-hd">
+        <div class="step-num">3</div>
+        <div class="step-title">半色調參數<small>調整雕刻密度與點點大小</small></div>
+      </div>
+      <div class="ctrl">
+        <label>點陣格距（px）<span class="val" id="gridLbl">5 px</span></label>
+        <input type="range" id="gridSl" min="2" max="30" value="5">
+      </div>
+      <div class="ctrl">
+        <label>點點放大率 <span class="val" id="scaleLbl">1.10 ×</span></label>
+        <input type="range" id="scaleSl" min="0.5" max="2.0" value="1.1" step="0.05">
+      </div>
+      <div class="ctrl">
+        <label>亮度對比 <span class="val" id="contrastLbl">0</span></label>
+        <input type="range" id="contrastSl" min="-100" max="100" value="0">
+      </div>
+      <div class="tog-row" style="margin-top:10px">
+        <span class="tog-lbl">反相輸出（暗底亮點）</span>
+        <label class="sw"><input type="checkbox" id="invertSw"><span class="sw-t"></span></label>
+      </div>
+    </div>
+
+    <!-- 步驟 4 -->
+    <div class="step">
+      <div class="step-hd">
+        <div class="step-num">4</div>
+        <div class="step-title">輸出尺寸與解析度<small>設定雷射雕刻區域大小</small></div>
+      </div>
+      <div class="dim-g">
+        <div class="ctrl" style="margin-bottom:0">
+          <label>寬度（cm）</label>
+          <input type="number" id="widthCm" value="10" min="1" max="200" step="0.1">
+        </div>
+        <div class="sep">×</div>
+        <div class="ctrl" style="margin-bottom:0">
+          <label>高度（cm）</label>
+          <input type="number" id="heightCm" value="10" min="1" max="200" step="0.1">
+        </div>
+      </div>
+      <label class="lock-lbl">
+        <input type="checkbox" id="lockAR" checked>🔒 鎖定長寬比例
+      </label>
+      <div class="ctrl" style="margin-top:14px">
+        <label>解析度（DPI）<span class="val" id="dpiLbl">300</span></label>
+        <input type="range" id="dpiSl" min="72" max="600" value="300">
+      </div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:4px" id="pxInfo">— × — px</div>
+    </div>
+
+    <!-- 步驟 5 -->
+    <div class="step">
+      <div class="step-hd">
+        <div class="step-num">5</div>
+        <div class="step-title">產生與下載<small>PNG 供列印；SVG 供雷射切割機</small></div>
+      </div>
+      <button class="btn btn-main" id="renderBtn" disabled>⚡ 開始產生半色調</button>
+      <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-lbl" id="progLbl">處理中…</div>
+      <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG 雕刻圖</button>
+      <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（LightBurn / LaserGRBL 用）</button>
+      <div class="tip"><strong>SVG 格式</strong>：每個圓點為獨立向量，可直接匯入雷射雕刻軟體，精度優於點陣圖。</div>
+    </div>
+
+  </div>
+
+  <!-- ══ Main ══ -->
+  <div class="main">
+    <div class="tab-bar">
+      <button class="tab active" id="tabH">半色調預覽</button>
+      <button class="tab" id="tabO">原始圖片</button>
+      <button class="tab" id="tabB">去背預覽</button>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <div class="empty" id="emptyEl">
+        <div class="eico">🔥</div>
+        <p>請先在左側<strong style="color:var(--text)">步驟 1</strong> 上傳圖片<br>支援拖曳放置</p>
+      </div>
+      <canvas id="cH"></canvas>
+      <canvas id="cO"></canvas>
+      <canvas id="cB"></canvas>
+    </div>
+    <div class="status">
+      <div class="stat">輸出：<span class="sv" id="sPx">—</span></div>
+      <div class="stat">圓點：<span class="sv" id="sDots">—</span></div>
+      <div class="stat">格距：<span class="sv" id="sGrid">—</span></div>
+      <div class="stat" id="sSvgWrap" style="display:none">SVG：<span class="sv" id="sSvg">—</span></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>車城國小資訊老師 @ Google Gemini 協作設計</footer>
+
+<script>
+'use strict';
+// ── refs ──
+const $=id=>document.getElementById(id);
+const uploadBox=$('uploadBox'),fileInput=$('fileInput'),imgInfo=$('imgInfo'),imgThumb=$('imgThumb'),imgMeta=$('imgMeta');
+const bgOn=$('bgOn'),bgPanel=$('bgPanel'),bgMode=$('bgMode'),threshRow=$('threshRow'),threshSl=$('threshSl'),threshLbl=$('threshLbl'),featherSl=$('featherSl'),featherLbl=$('featherLbl');
+const gridSl=$('gridSl'),gridLbl=$('gridLbl'),scaleSl=$('scaleSl'),scaleLbl=$('scaleLbl'),contrastSl=$('contrastSl'),contrastLbl=$('contrastLbl'),invertSw=$('invertSw');
+const widthCm=$('widthCm'),heightCm=$('heightCm'),lockAR=$('lockAR'),dpiSl=$('dpiSl'),dpiLbl=$('dpiLbl'),pxInfo=$('pxInfo');
+const renderBtn=$('renderBtn'),dlPng=$('dlPng'),dlSvg=$('dlSvg'),progWrap=$('progWrap'),progFill=$('progFill'),progLbl=$('progLbl');
+const tabH=$('tabH'),tabO=$('tabO'),tabB=$('tabB'),emptyEl=$('emptyEl'),cH=$('cH'),cO=$('cO'),cB=$('cB');
+const sPx=$('sPx'),sDots=$('sDots'),sGrid=$('sGrid'),sSvgWrap=$('sSvgWrap'),sSvg=$('sSvg');
+
+let origImg=null,origW=0,origH=0,ar=1,svgData=null;
+
+// ── helpers ──
+const cm2px=(cm,dpi)=>Math.round(parseFloat(cm)*dpi/2.54);
+const fmtB=b=>b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const tick=()=>new Promise(r=>requestAnimationFrame(r));
+
+function updPxInfo(){
+  const d=+dpiSl.value;
+  pxInfo.textContent=`${cm2px(widthCm.value,d)} × ${cm2px(heightCm.value,d)} px`;
+}
+function setProgress(p,lbl=''){
+  progFill.style.width=p+'%';
+  const show=p>0&&p<100;
+  progWrap.classList.toggle('show',show);
+  progLbl.classList.toggle('show',show);
+  if(show)progLbl.textContent=lbl||'處理中…';
+}
+
+// ── upload ──
+uploadBox.addEventListener('click',()=>fileInput.click());
+uploadBox.addEventListener('dragover',e=>{e.preventDefault();uploadBox.classList.add('over');});
+uploadBox.addEventListener('dragleave',()=>uploadBox.classList.remove('over'));
+uploadBox.addEventListener('drop',e=>{e.preventDefault();uploadBox.classList.remove('over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadFile(f);});
+fileInput.addEventListener('change',()=>{if(fileInput.files[0])loadFile(fileInput.files[0]);});
+
+function loadFile(f){
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      origImg=img;origW=img.width;origH=img.height;ar=origW/origH;
+      cO.width=origW;cO.height=origH;
+      cO.getContext('2d').drawImage(img,0,0);
+      imgThumb.src=ev.target.result;
+      imgMeta.innerHTML=`<strong>${origW}×${origH}</strong><br>${f.type.replace('image/','').toUpperCase()} · ${(f.size/1024).toFixed(0)} KB`;
+      imgInfo.style.display='flex';
+      widthCm.value=(origW/300*2.54).toFixed(1);
+      heightCm.value=(origH/300*2.54).toFixed(1);
+      updPxInfo();
+      renderBtn.disabled=false;dlPng.disabled=true;dlSvg.disabled=true;svgData=null;
+      sSvgWrap.style.display='none';
+      emptyEl.style.display='none';
+      switchTab('original');
+      updNoBg();
+    };
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+// ── aspect ──
+widthCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)heightCm.value=(parseFloat(widthCm.value)/ar).toFixed(1);updPxInfo();});
+heightCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)widthCm.value=(parseFloat(heightCm.value)*ar).toFixed(1);updPxInfo();});
+
+// ── sliders ──
+dpiSl.addEventListener('input',()=>{dpiLbl.textContent=dpiSl.value;updPxInfo();});
+gridSl.addEventListener('input',()=>gridLbl.textContent=gridSl.value+' px');
+scaleSl.addEventListener('input',()=>scaleLbl.textContent=(+scaleSl.value).toFixed(2)+' ×');
+contrastSl.addEventListener('input',()=>contrastLbl.textContent=contrastSl.value);
+threshSl.addEventListener('input',()=>{threshLbl.textContent=threshSl.value;updNoBg();});
+featherSl.addEventListener('input',()=>{featherLbl.textContent=featherSl.value+' px';updNoBg();});
+
+// ── bg toggle ──
+bgOn.addEventListener('change',()=>{bgPanel.classList.toggle('open',bgOn.checked);if(origImg)updNoBg();});
+bgMode.addEventListener('change',()=>{threshRow.style.display=bgMode.value==='threshold'?'block':'none';if(origImg)updNoBg();});
+
+// ── alpha mask ──
+function buildMask(src,mode,thresh,feather){
+  const{data:d,width:w,height:h}=src;
+  const a=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++){
+    const br=d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114;
+    let k;
+    if(mode==='bright')     k=br>230?0:br>200?(230-br)/30:1;
+    else if(mode==='dark')  k=br<20?0:br<50?(br-20)/30:1;
+    else                    k=br>=thresh?0:br>=thresh-20?(thresh-br)/20:1;
+    a[i]=k;
+  }
+  if(feather>0){
+    const b=new Float32Array(w*h);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      let s=0,c=0;
+      for(let dy=-feather;dy<=feather;dy++)for(let dx=-feather;dx<=feather;dx++){
+        const nx=x+dx,ny=y+dy;
+        if(nx>=0&&nx<w&&ny>=0&&ny<h){s+=a[ny*w+nx];c++;}
+      }
+      b[y*w+x]=s/c;
+    }
+    return b;
+  }
+  return a;
+}
+
+function updNoBg(){
+  if(!origImg)return;
+  const src=cO.getContext('2d').getImageData(0,0,origW,origH);
+  cB.width=origW;cB.height=origH;
+  const ctx=cB.getContext('2d');
+  const out=ctx.createImageData(origW,origH);
+  if(!bgOn.checked){out.data.set(src.data);ctx.putImageData(out,0,0);return;}
+  const mask=buildMask(src,bgMode.value,+threshSl.value,+featherSl.value);
+  for(let i=0;i<origW*origH;i++){
+    out.data[i*4]=src.data[i*4];out.data[i*4+1]=src.data[i*4+1];out.data[i*4+2]=src.data[i*4+2];
+    out.data[i*4+3]=Math.round(mask[i]*255);
+  }
+  ctx.putImageData(out,0,0);
+}
+
+// ── contrast ──
+function applyContrast(data,c){
+  const f=(259*(c+255))/(255*(259-c));
+  for(let i=0;i<data.length;i+=4){
+    data[i]  =Math.min(255,Math.max(0,f*(data[i]  -128)+128));
+    data[i+1]=Math.min(255,Math.max(0,f*(data[i+1]-128)+128));
+    data[i+2]=Math.min(255,Math.max(0,f*(data[i+2]-128)+128));
+  }
+}
+
+// ── render ──
+renderBtn.addEventListener('click',doRender);
+async function doRender(){
+  if(!origImg)return;
+  renderBtn.disabled=true;setProgress(5,'讀取參數…');await tick();
+  const dpi=+dpiSl.value,outW=cm2px(widthCm.value,dpi),outH=cm2px(heightCm.value,dpi);
+  const grid=+gridSl.value,scale=+scaleSl.value,contrast=+contrastSl.value;
+  const invert=invertSw.checked,doBg=bgOn.checked;
+
+  const off=document.createElement('canvas');off.width=outW;off.height=outH;
+  const octx=off.getContext('2d');octx.drawImage(origImg,0,0,outW,outH);
+  const imgData=octx.getImageData(0,0,outW,outH);
+  if(contrast)applyContrast(imgData.data,contrast);
+
+  let mask=null;
+  if(doBg)mask=buildMask(imgData,bgMode.value,+threshSl.value,+featherSl.value);
+
+  setProgress(25,'灰階化…');await tick();
+  const gray=new Uint8Array(outW*outH);
+  for(let i=0;i<outW*outH;i++)gray[i]=(imgData.data[i*4]*.299+imgData.data[i*4+1]*.587+imgData.data[i*4+2]*.114)|0;
+
+  cH.width=outW;cH.height=outH;
+  const ctx=cH.getContext('2d');
+  ctx.fillStyle=invert?'#000':'#fff';ctx.fillRect(0,0,outW,outH);
+
+  const half=grid/2,maxR=half*scale;
+  const cols=Math.ceil(outW/grid),rows=Math.ceil(outH/grid),total=cols*rows;
+  let parts=[],dots=0,bi=0;
+  const BATCH=600;
+
+  setProgress(35,'繪製圓點…');
+  function drawBatch(){
+    const end=Math.min(bi+BATCH,total);
+    for(;bi<end;bi++){
+      const col=bi%cols,row=Math.floor(bi/cols);
+      const cx=col*grid+half,cy=row*grid+half;
+      if(cx>=outW||cy>=outH)continue;
+      if(doBg&&mask){
+        const mx=Math.min(Math.round(cx),outW-1),my=Math.min(Math.round(cy),outH-1);
+        if(mask[my*outW+mx]<0.1)continue;
+      }
+      let s=0,c=0;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+        const px=Math.min(outW-1,Math.max(0,Math.round(cx)+dx));
+        const py=Math.min(outH-1,Math.max(0,Math.round(cy)+dy));
+        s+=gray[py*outW+px];c++;
+      }
+      const norm=invert?(s/c)/255:1-(s/c)/255;
+      const r=Math.min(maxR,norm*maxR);
+      if(r<0.5)continue;
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.fillStyle=invert?'#fff':'#000';ctx.fill();
+      parts.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(2)}"/>`);
+      dots++;
+    }
+    setProgress(35+Math.round(bi/total*60),`繪製中 ${Math.round(bi/total*100)}%`);
+    if(bi<total)requestAnimationFrame(drawBatch);
+    else finalize(outW,outH,dots,parts,grid,dpi);
+  }
+  requestAnimationFrame(drawBatch);
+}
+
+function finalize(w,h,dots,parts,grid,dpi){
+  svgData=`<?xml version="1.0" encoding="UTF-8"?>
+<!-- 車城國小 雷射雕刻半色調 SVG v2.0 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <rect width="${w}" height="${h}" fill="white"/>
+  <g fill="black">${parts.join('')}</g>
+</svg>`;
+  sPx.textContent=`${w}×${h} px`;sDots.textContent=dots.toLocaleString();sGrid.textContent=`${grid} px`;
+  const sz=new Blob([svgData]).size;sSvgWrap.style.display='';sSvg.textContent=fmtB(sz);
+  setProgress(100);dlPng.disabled=false;dlSvg.disabled=false;renderBtn.disabled=false;
+  emptyEl.style.display='none';switchTab('halftone');
+}
+
+// ── download ──
+dlPng.addEventListener('click',()=>{
+  cH.toBlob(blob=>{const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'halftone-laser.png'});a.click();URL.revokeObjectURL(a.href);},'image/png');
+});
+dlSvg.addEventListener('click',()=>{
+  if(!svgData)return;
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([svgData],{type:'image/svg+xml'})),download:'halftone-laser.svg'});
+  a.click();URL.revokeObjectURL(a.href);
+});
+
+// ── tabs ──
+function switchTab(tab){
+  [cH,cO,cB].forEach(c=>c.style.display='none');
+  [tabH,tabO,tabB].forEach(b=>b.classList.remove('active'));
+  if(tab==='halftone'){cH.style.display='block';tabH.classList.add('active');}
+  else if(tab==='original'){cO.style.display='block';tabO.classList.add('active');}
+  else{cB.style.display='block';tabB.classList.add('active');updNoBg();}
+}
+tabH.addEventListener('click',()=>{if(origImg)switchTab('halftone');});
+tabO.addEventListener('click',()=>{if(origImg)switchTab('original');});
+tabB.addEventListener('click',()=>{if(origImg)switchTab('nobg');});
+
+updPxInfo();
+</script>
+</body>
+</html>

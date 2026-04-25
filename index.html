@@ -2,158 +2,165 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<title>車城國小｜雷射雕刻半色調工具 v3.4</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車城國小｜雷射雕刻半色調工具 v4.0</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+/* ══ 變數 ══ */
 :root{
-  --bg:#f0f2f5;--surface:#ffffff;--panel:#e8edf5;
-  --accent:#e94560;--accent2:#f5a623;
-  --text:#2d3748;--dim:#718096;--border:#d1dae8;
-  --green:#2f9e44;--r:10px;--sb:320px;
+  --accent:#e94560; --accent2:#f5a623; --green:#2f9e44;
+  --bg:#f0f2f5; --surface:#fff; --border:#d8dde8;
+  --text:#2d3748; --dim:#718096;
+  --radius:10px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overscroll-behavior:none;}
-body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;font-size:14px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
 
-header{background:var(--surface);border-bottom:3px solid var(--accent);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;min-height:60px;}
-.hico{font-size:24px;width:42px;height:42px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-header h1{font-size:15px;font-weight:700;color:#1a202c;line-height:1.3;}
-header p{font-size:11px;color:var(--dim);margin-top:1px;}
-.hbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;}
+/* ══ Header ══ */
+header{
+  background:var(--surface);border-bottom:3px solid var(--accent);
+  padding:12px 20px;display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:100;
+}
+.hico{width:38px;height:38px;background:var(--accent);border-radius:9px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
+header h1{font-size:15px;font-weight:700;color:#1a202c;}
+header p{font-size:10px;color:var(--dim);margin-top:1px;}
+.badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;}
 
-.layout{display:flex;flex:1;overflow:hidden;min-height:0;}
-.sidebar{width:var(--sb);min-width:var(--sb);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;}
-.sidebar::-webkit-scrollbar{width:4px;}
-.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-.main{flex:1;display:flex;flex-direction:column;min-width:0;background:#e8ecf0;}
+/* ══ 桌機雙欄 ══ */
+@media(min-width:700px){
+  .page-wrap{display:flex;gap:0;height:calc(100vh - 63px);}
+  .sidebar{width:320px;min-width:320px;overflow-y:auto;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;}
+  .result-col{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#e0e5ec;}
+  .sidebar::-webkit-scrollbar{width:4px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+}
 
+/* ══ 手機單欄 ══ */
+@media(max-width:699px){
+  .page-wrap{display:block;}
+  .sidebar{background:var(--surface);border-bottom:1px solid var(--border);}
+  .result-col{background:#e0e5ec;padding-bottom:30px;}
+}
+
+/* ══ 步驟區塊 ══ */
 .step{border-bottom:1px solid var(--border);padding:16px 18px;}
-.step-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
-.snum{background:var(--accent);color:#fff;width:24px;height:24px;min-width:24px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.step-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.snum{background:var(--accent);color:#fff;width:24px;height:24px;min-width:24px;border-radius:50%;font-size:12px;font-weight:700;display:grid;place-items:center;}
 .stit{font-size:14px;font-weight:700;color:#1a202c;}
-.stit small{display:block;font-size:10px;color:var(--dim);font-weight:400;margin-top:2px;line-height:1.5;}
+.stit small{display:block;font-size:10px;color:var(--dim);font-weight:400;margin-top:1px;}
 
-.upload-box{border:2px dashed var(--border);border-radius:var(--r);padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(0,0,0,.02);user-select:none;}
-.upload-box:hover,.upload-box.over{border-color:var(--accent);background:rgba(233,69,96,.05);}
-.upload-box .ico{font-size:32px;margin-bottom:6px;}
-.upload-box .main-txt{font-size:13px;font-weight:500;color:#1a202c;}
-.upload-box .sub{font-size:11px;color:var(--dim);margin-top:4px;}
-#fileInput{display:none;}
-.img-card{display:none;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.03);border-radius:8px;border:1px solid var(--border);}
-.img-thumb{width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;}
-.img-meta{font-size:11px;color:var(--dim);line-height:1.7;}
-.img-meta strong{color:var(--text);}
-
-.ctrl{margin-bottom:13px;}
+/* ══ 控件 ══ */
+.ctrl{margin-bottom:12px;}
 .ctrl:last-child{margin-bottom:0;}
-.ctrl>label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);margin-bottom:5px;}
-.val{font-weight:700;color:var(--accent2);font-size:11px;background:rgba(245,166,35,.13);padding:1px 7px;border-radius:4px;white-space:nowrap;}
-input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:20px;}
-input[type=number]{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color .2s;}
+.ctrl>label{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:4px;}
+.val{font-weight:700;color:var(--accent2);font-size:11px;background:rgba(245,166,35,.12);padding:1px 7px;border-radius:4px;}
+input[type=range]{width:100%;accent-color:var(--accent);height:20px;cursor:pointer;}
+input[type=number]{width:100%;background:#fff;border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-size:14px;outline:none;font-family:inherit;}
 input[type=number]:focus{border-color:var(--accent);}
-select{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;cursor:pointer;}
-.dim-g{display:grid;grid-template-columns:1fr 24px 1fr;gap:8px;align-items:end;}
-.sep{text-align:center;font-size:18px;color:var(--dim);padding-bottom:8px;}
-.lock-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);cursor:pointer;user-select:none;margin-top:8px;}
+select{width:100%;background:#fff;border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;cursor:pointer;font-family:inherit;}
+.dim-g{display:grid;grid-template-columns:1fr 20px 1fr;gap:6px;align-items:end;}
+.sep{text-align:center;color:var(--dim);font-size:16px;padding-bottom:8px;}
+.lock-lbl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);cursor:pointer;margin-top:7px;}
 .lock-lbl input{accent-color:var(--accent);}
 
-.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.tog-row:last-child{margin-bottom:0;}
-.tog-lbl{font-size:13px;color:var(--text);line-height:1.3;}
+/* ══ Toggle ══ */
+.tog{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tog-lbl{font-size:13px;color:var(--text);}
 .tog-lbl small{display:block;font-size:10px;color:var(--dim);}
-.sw{position:relative;width:44px;height:24px;flex-shrink:0;}
+.sw{position:relative;width:42px;height:22px;flex-shrink:0;}
 .sw input{opacity:0;width:0;height:0;}
-.sw-t{position:absolute;inset:0;background:var(--border);border-radius:24px;cursor:pointer;transition:.25s;}
-.sw-t::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.sw-t{position:absolute;inset:0;background:#ccc;border-radius:22px;cursor:pointer;transition:.2s;}
+.sw-t::before{content:'';position:absolute;width:17px;height:17px;left:2.5px;bottom:2.5px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .sw input:checked+.sw-t{background:var(--accent);}
 .sw input:checked+.sw-t::before{transform:translateX(20px);}
 
+/* ══ 子面板 ══ */
 .sub-panel{background:rgba(0,0,0,.02);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;display:none;}
 .sub-panel.open{display:block;}
-.tip{font-size:10px;color:var(--dim);line-height:1.6;margin-top:8px;padding:8px 10px;background:rgba(0,0,0,.03);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
+
+/* ══ Tip ══ */
+.tip{font-size:10px;color:var(--dim);line-height:1.6;margin-top:8px;padding:7px 10px;background:rgba(0,0,0,.03);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
 .tip strong{color:#b7791f;}
-.tip a{color:var(--accent2);}
+
+/* ══ Alert ══ */
 .alert{padding:8px 10px;border-radius:6px;font-size:11px;line-height:1.6;margin-top:8px;display:none;}
 .alert.show{display:block;}
-.alert.warn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:#b7791f;}
-.alert.info{background:rgba(47,158,68,.08);border:1px solid rgba(47,158,68,.3);color:var(--green);}
+.alert-info{background:rgba(47,158,68,.08);border:1px solid rgba(47,158,68,.3);color:var(--green);}
+.alert-warn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:#b7791f;}
 
-.btn{width:100%;padding:11px 16px;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Noto Sans TC',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;min-height:44px;}
+/* ══ 上傳框 ══ */
+.upload-box{border:2px dashed var(--border);border-radius:var(--radius);padding:22px 14px;text-align:center;cursor:pointer;transition:.2s;background:rgba(0,0,0,.02);}
+.upload-box:hover,.upload-box.over{border-color:var(--accent);background:rgba(233,69,96,.04);}
+.upload-box .ico{font-size:30px;margin-bottom:5px;}
+.upload-box .mt{font-size:13px;font-weight:500;color:#1a202c;}
+.upload-box .sub{font-size:11px;color:var(--dim);margin-top:3px;}
+#fileInput{display:none;}
+.img-card{display:none;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.03);border:1px solid var(--border);border-radius:8px;}
+.img-th{width:42px;height:42px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0;}
+.img-meta{font-size:11px;color:var(--dim);line-height:1.7;}
+.img-meta strong{color:var(--text);}
+
+/* ══ 按鈕 ══ */
+.btn{width:100%;padding:12px 16px;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;transition:.18s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;min-height:48px;}
 .btn:last-child{margin-bottom:0;}
-.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn:disabled{opacity:.38;cursor:not-allowed;}
 .btn-main{background:var(--accent);color:#fff;}
 .btn-main:not(:disabled):hover{background:#c73652;}
 .btn-ai{background:#4f46e5;color:#fff;}
 .btn-ai:not(:disabled):hover{background:#4338ca;}
-.btn-dl{background:var(--panel);color:var(--text);border:1px solid var(--border);}
+.btn-dl{background:#e8edf5;color:var(--text);border:1px solid var(--border);}
 .btn-dl:not(:disabled):hover{border-color:var(--accent);color:var(--accent);}
-.btn-svg{background:rgba(47,158,68,.1);color:var(--green);border:1px solid rgba(47,158,68,.3);}
-.btn-svg:not(:disabled):hover{background:rgba(47,158,68,.2);}
-.btn-preview{background:#f0f4ff;color:#4f46e5;border:1px solid #c7d2fe;}
-.btn-preview:not(:disabled):hover{background:#e0e7ff;}
+.btn-svg{background:rgba(47,158,68,.1);color:var(--green);border:1px solid rgba(47,158,68,.25);}
+.btn-svg:not(:disabled):hover{background:rgba(47,158,68,.18);}
+.btn-ghost{background:rgba(79,70,229,.08);color:#4f46e5;border:1px solid rgba(79,70,229,.2);}
+.btn-ghost:not(:disabled):hover{background:rgba(79,70,229,.15);}
 
-.prog-wrap{height:5px;background:var(--border);border-radius:4px;overflow:hidden;margin:10px 0 4px;display:none;}
+/* ══ 進度條 ══ */
+.prog-wrap{height:4px;background:var(--border);border-radius:4px;margin:8px 0 3px;display:none;overflow:hidden;}
 .prog-wrap.show{display:block;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .15s;width:0%;}
-.prog-lbl{font-size:11px;color:var(--dim);text-align:right;min-height:16px;margin-bottom:4px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .15s;border-radius:4px;}
+.prog-lbl{font-size:11px;color:var(--dim);text-align:right;min-height:15px;margin-bottom:4px;}
 
-.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:4px;flex-shrink:0;overflow-x:auto;}
+/* ══ 結果區 ══ */
+.result-col-inner{flex:1;display:flex;flex-direction:column;min-height:0;}
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;gap:2px;overflow-x:auto;flex-shrink:0;}
 .tab-bar::-webkit-scrollbar{display:none;}
-.tab{padding:12px 14px;font-size:12px;font-weight:500;color:var(--dim);background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:'Noto Sans TC',sans-serif;min-height:44px;}
-.tab:hover{color:var(--text);}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.tab-btn{padding:11px 14px;font-size:12px;font-weight:500;color:var(--dim);background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;font-family:inherit;min-height:42px;}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 
-/* 淡色棋盤格背景，讓透明區域清楚可見，又不影響深色圓點辨識 */
-.canvas-wrap{
+/* ★ 棋盤格：淡色（深色就看不到白底黑點）*/
+.cv-wrap{
   flex:1;display:flex;align-items:center;justify-content:center;
-  overflow:auto;padding:20px;position:relative;
-  background-color:#e0e5ec;
+  padding:20px;overflow:auto;min-height:300px;
+  background-color:#dde2ea;
   background-image:
-    linear-gradient(45deg,#cdd4df 25%,transparent 25%),
-    linear-gradient(-45deg,#cdd4df 25%,transparent 25%),
-    linear-gradient(45deg,transparent 75%,#cdd4df 75%),
-    linear-gradient(-45deg,transparent 75%,#cdd4df 75%);
-  background-size:20px 20px;
-  background-position:0 0,0 10px,10px -10px,-10px 0px;
+    linear-gradient(45deg,#c8cfd9 25%,transparent 25%),
+    linear-gradient(-45deg,#c8cfd9 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#c8cfd9 75%),
+    linear-gradient(-45deg,transparent 75%,#c8cfd9 75%);
+  background-size:18px 18px;
+  background-position:0 0,0 9px,9px -9px,-9px 0;
 }
-canvas{max-width:100%;max-height:calc(100vh - 220px);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:none;}
-.empty-state{text-align:center;pointer-events:none;}
-.empty-state .eico{font-size:64px;opacity:.15;}
-.empty-state p{color:var(--dim);font-size:13px;margin-top:14px;line-height:1.8;}
+canvas{max-width:100%;max-height:70vh;border-radius:6px;box-shadow:0 3px 14px rgba(0,0,0,.15);display:none;}
+.empty-state{text-align:center;opacity:.4;}
+.empty-state .ei{font-size:56px;}
+.empty-state p{font-size:13px;color:var(--dim);margin-top:10px;}
 
-.status{background:var(--surface);border-top:1px solid var(--border);padding:8px 18px;display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--dim);flex-shrink:0;}
-.stat{display:flex;align-items:center;gap:4px;}
+.stat-bar{background:var(--surface);border-top:1px solid var(--border);padding:7px 16px;display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--dim);}
 .sv{color:var(--accent2);font-weight:700;}
-footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 20px;font-size:11px;color:var(--dim);text-align:center;flex-shrink:0;}
 
-/* 手機 */
-@media(max-width:700px){
-  :root{--sb:100%;}
-  .layout{display:block;position:relative;height:calc(100vh - 60px - 44px);}
-  .main{position:absolute;inset:0;height:100%;}
-  .canvas-wrap{padding:12px;max-height:calc(100% - 48px - 36px);background-color:#e0e5ec;}
-  canvas{max-height:100%;}
-  .tab-bar{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 8px;border-bottom:none;border-top:1px solid var(--border);}
-  .tab{padding:10px 12px;font-size:11px;}
-  .sidebar{position:fixed;bottom:0;left:0;right:0;width:100%;min-width:unset;max-height:80vh;z-index:30;border-right:none;border-top:2px solid var(--accent);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,0,.15,1);overflow-y:auto;}
-  .sidebar.open{transform:translateY(0);}
-  .drawer-handle{display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--surface);z-index:2;border-radius:16px 16px 0 0;}
-  .drawer-bar{width:40px;height:4px;background:var(--border);border-radius:4px;margin-bottom:6px;}
-  .drawer-label{font-size:12px;font-weight:700;color:var(--text);}
-  .fab{display:flex;position:fixed;bottom:56px;right:16px;z-index:25;background:var(--accent);color:#fff;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(233,69,96,.5);}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:29;}
-  .overlay.show{display:block;}
-  .step{padding:14px 16px;}
-  .btn{min-height:48px;}
+footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 20px;font-size:11px;color:var(--dim);text-align:center;}
+
+/* 手機額外優化 */
+@media(max-width:699px){
+  .cv-wrap{min-height:340px;padding:14px;}
+  canvas{max-height:50vh;}
+  .btn{min-height:52px;font-size:15px;}
   input[type=number],select{font-size:16px;}
-  .status{gap:10px;font-size:10px;padding:6px 14px;}
-  header h1{font-size:14px;}header p{display:none;}
-}
-@media(min-width:701px){
-  .drawer-handle,.fab,.overlay{display:none !important;}
-  .sidebar{transform:none !important;}
+  header h1{font-size:14px;}
+  header p{display:none;}
 }
 </style>
 </head>
@@ -163,160 +170,143 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
   <div class="hico">🔥</div>
   <div>
     <h1>車城國小｜雷射雕刻半色調工具</h1>
-    <p>去背 · PNG 輸出 · SVG 向量（LightBurn / LaserGRBL）</p>
+    <p>去背 · 半色調點陣 · PNG · SVG（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="hbadge">v3.4</div>
+  <div class="badge">v4.0</div>
 </header>
 
-<div class="overlay" id="overlay"></div>
-<div class="layout">
+<div class="page-wrap">
 
-  <!-- ══ Sidebar ══ -->
-  <div class="sidebar" id="sidebar">
-    <div class="drawer-handle" id="drawerHandle">
-      <div class="drawer-bar"></div>
-      <div class="drawer-label">⚙️ 設定面板</div>
-    </div>
+  <!-- ══ 側欄（設定）══ -->
+  <div class="sidebar">
 
     <!-- S1 上傳 -->
     <div class="step">
       <div class="step-hd">
         <div class="snum">1</div>
-        <div class="stit">匯入影像<small>點擊或拖曳圖片至此</small></div>
+        <div class="stit">匯入影像<small>支援 JPG · PNG · WEBP · GIF</small></div>
       </div>
       <div class="upload-box" id="uploadBox">
         <div class="ico">🖼️</div>
-        <div class="main-txt">點擊上傳 或拖曳圖片至此</div>
-        <div class="sub">JPG · PNG · WEBP · GIF</div>
+        <div class="mt">點擊上傳 或拖曳圖片至此</div>
+        <div class="sub">建議使用已去背 PNG（透明背景）或高對比度影像</div>
       </div>
       <input type="file" id="fileInput" accept="image/*">
       <div class="img-card" id="imgCard">
-        <img class="img-thumb" id="imgThumb" src="" alt="">
+        <img class="img-th" id="imgThumb" src="" alt="">
         <div class="img-meta" id="imgMeta">—</div>
       </div>
-      <div class="alert info" id="alertAlpha">✅ 偵測到透明背景，已自動啟用去背（Alpha 模式）。</div>
-      <div class="alert warn" id="alertNoAlpha">ℹ️ 未偵測到透明通道。若需去背請在步驟 2 啟用，或先至 <a href="https://www.remove.bg" target="_blank"><strong>remove.bg</strong></a> 去背後再上傳。</div>
+      <div class="alert alert-info" id="alertAlpha">✅ 偵測到透明背景，已自動啟用去背（Alpha 通道模式）。</div>
+      <div class="alert alert-warn" id="alertNoAlpha">ℹ️ 此圖無透明通道。若需去背請在步驟 2 選擇模式，或先至 <a href="https://www.remove.bg" target="_blank">remove.bg</a> 去背後再上傳。</div>
     </div>
 
     <!-- S2 去背 -->
     <div class="step">
       <div class="step-hd">
         <div class="snum">2</div>
-        <div class="stit">去背設定<small>移除背景，讓雷射只雕刻主體輪廓</small></div>
+        <div class="stit">去背設定<small>雷射只雕刻主體，背景不雕</small></div>
       </div>
-
-      <div class="tog-row">
+      <div class="tog">
         <div class="tog-lbl">啟用去背</div>
         <label class="sw"><input type="checkbox" id="bgOn"><span class="sw-t"></span></label>
       </div>
-
       <div class="sub-panel" id="bgPanel">
         <div class="ctrl">
           <label>去背模式</label>
           <select id="bgMode">
             <option value="alpha">🟢 原始透明通道（已去背 PNG 首選）</option>
-            <option value="ai">🤖 AI 智慧去背（任意背景圖片）</option>
+            <option value="ai">🤖 AI 智慧去背（任意背景，需聯網）</option>
             <option value="bright">移除亮色背景（白底 / 淺色底）</option>
             <option value="threshold">手動亮度閾值</option>
           </select>
         </div>
-
-        <!-- AI 去背說明 + 執行按鈕 -->
-        <div id="aiSection" style="display:none">
-          <div class="alert warn" style="display:block;margin-top:0;margin-bottom:10px;">
-            🤖 AI 去背需下載模型（約 40MB），首次需 30–60 秒。<br>
-            本機 file:// 環境可能失敗，建議部署至 GitHub Pages。
+        <!-- AI 去背區 -->
+        <div id="aiSec" style="display:none">
+          <div class="alert alert-warn" style="display:block;margin-top:0;margin-bottom:10px;">
+            🤖 首次需下載 AI 模型（約 40MB），需 30–60 秒。本機 file:// 可能失敗，建議部署至 GitHub Pages。
           </div>
-          <button class="btn btn-ai" id="runAiBtn">
-            🤖 執行 AI 去背（原圖更新為去背結果）
-          </button>
-          <div id="aiBgStatus" style="font-size:11px;color:var(--green);display:none;margin-top:6px;padding:6px 8px;background:rgba(47,158,68,.08);border-radius:6px;border:1px solid rgba(47,158,68,.3);">
-            ✅ AI 去背完成，原圖已更新為透明背景 PNG
+          <button class="btn btn-ai" id="runAiBtn">🤖 執行 AI 去背（原圖更新）</button>
+          <div id="aiOk" style="display:none;font-size:11px;color:var(--green);margin-top:6px;padding:6px 8px;background:rgba(47,158,68,.08);border-radius:6px;border:1px solid rgba(47,158,68,.25);">
+            ✅ AI 去背完成，原圖已更新為透明背景
           </div>
         </div>
-
-        <!-- 亮色/閾值模式參數 -->
-        <div class="ctrl" id="threshRow" style="display:none">
-          <label>亮度閾值 <span class="val" id="threshLbl">230</span></label>
-          <input type="range" id="threshSl" min="100" max="255" value="230">
+        <!-- 閾值 -->
+        <div class="ctrl" id="threshSec" style="display:none">
+          <label>亮度閾值 <span class="val" id="threshLbl">225</span></label>
+          <input type="range" id="threshSl" min="80" max="255" value="225">
           <div class="tip" style="margin-top:4px">高於此值的像素視為背景移除。純白背景建議 220–240。</div>
         </div>
-
-        <button class="btn btn-preview" id="previewBgBtn" style="margin-top:8px;">
-          👁 預覽去背效果（切換去背預覽分頁）
-        </button>
+        <button class="btn btn-ghost" id="previewBgBtn" style="margin-top:8px;">👁 預覽去背效果</button>
       </div>
-
       <div class="tip">
-        💡 <strong>已去背 PNG</strong>（透明背景）→ 選「原始透明通道」，效果最正確。<br>
-        <strong>AI 去背</strong>：按「執行 AI 去背」後原圖直接更新，再點預覽確認。<br>
-        白色背景圖片 → 選「移除亮色背景」。
+        💡 <strong>已去背 PNG</strong> → 選「原始透明通道」，效果最正確。<br>
+        白色背景圖片 → 選「移除亮色背景」或用 AI 去背。
       </div>
     </div>
 
-    <!-- S3 半色調 -->
+    <!-- S3 半色調參數 -->
     <div class="step">
       <div class="step-hd">
         <div class="snum">3</div>
-        <div class="stit">半色調參數<small>暗色像素 → 大圓點；亮色像素 → 小圓點</small></div>
+        <div class="stit">半色調參數<small>暗色 → 大圓點（雕深）；亮色 → 小圓點</small></div>
       </div>
 
       <div class="ctrl">
         <label>點陣格距（px）<span class="val" id="gridLbl">6 px</span></label>
         <input type="range" id="gridSl" min="2" max="30" value="6">
-        <div class="tip" style="margin-top:4px">格距越小 → 細節越多，但檔案越大。建議 4–10px。</div>
+        <div class="tip" style="margin-top:4px">格距 = 相鄰圓點圓心間距。建議 4–10px；越小細節越多但檔案越大。</div>
       </div>
 
       <div class="ctrl">
-        <label>圓點最大填充率 <span class="val" id="scaleLbl">0.92</span></label>
+        <label>最大填充率 <span class="val" id="scaleLbl">0.92</span></label>
         <input type="range" id="scaleSl" min="0.3" max="1.0" value="0.92" step="0.02">
-        <div class="tip" style="margin-top:4px">純黑像素的圓點半徑 = 格距/2 × 填充率。建議 0.85–0.95。</div>
+        <div class="tip" style="margin-top:4px">純黑像素圓點半徑 = 格距/2 × 填充率。建議 0.85–0.95。</div>
       </div>
 
       <div class="ctrl">
-        <label>Gamma 修正 <span class="val" id="gammaLbl">1.8</span></label>
+        <label>Gamma 壓暗 <span class="val" id="gammaLbl">1.8</span></label>
         <input type="range" id="gammaSl" min="0.5" max="3.0" value="1.8" step="0.1">
         <div class="tip" style="margin-top:4px">
-          &gt; 1.0：整體壓暗，讓淺色（奶油色）也產生圓點。<br>
-          推薦雷射雕刻：<strong>1.5–2.2</strong>（預設 1.8）。
+          > 1：整體壓暗，讓淺色區域也出現明顯圓點。<br>
+          <strong>推薦雷射雕刻：1.5–2.2</strong>（預設 1.8）。
         </div>
       </div>
 
       <div class="ctrl">
-        <label>對比增強（S 曲線）<span class="val" id="contrastLbl">0</span></label>
-        <input type="range" id="contrastSl" min="-80" max="80" value="0" step="5">
-        <div class="tip" style="margin-top:4px">正值拉開明暗差距，讓輪廓更清晰。推薦 +20–+40。</div>
+        <label>對比增強（S 曲線）<span class="val" id="ctrLbl">+20</span></label>
+        <input type="range" id="ctrSl" min="-80" max="80" value="20" step="5">
+        <div class="tip" style="margin-top:4px">正值拉開明暗差距，讓輪廓更清晰。推薦 +15–+35。</div>
       </div>
 
-      <div class="tog-row" style="margin-top:10px">
-        <div class="tog-lbl">反相輸出<small>圓點白色、底色黑色（適合深色材料雕白）</small></div>
+      <div class="tog" style="margin-top:10px">
+        <div class="tog-lbl">反相輸出<small>圓點白色底色黑色（深色材料雕白）</small></div>
         <label class="sw"><input type="checkbox" id="invertSw"><span class="sw-t"></span></label>
       </div>
     </div>
 
-    <!-- S4 尺寸 -->
+    <!-- S4 輸出尺寸 -->
     <div class="step">
       <div class="step-hd">
         <div class="snum">4</div>
-        <div class="stit">輸出尺寸與解析度<small>設定雷射雕刻區域大小</small></div>
+        <div class="stit">輸出尺寸<small>設定雷射雕刻實際大小</small></div>
       </div>
       <div class="dim-g">
         <div class="ctrl" style="margin-bottom:0">
-          <label>寬度（cm）</label>
-          <input type="number" id="widthCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
+          <label>寬（cm）</label>
+          <input type="number" id="wCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
         </div>
         <div class="sep">×</div>
         <div class="ctrl" style="margin-bottom:0">
-          <label>高度（cm）</label>
-          <input type="number" id="heightCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
+          <label>高（cm）</label>
+          <input type="number" id="hCm" value="10" min="0.5" max="200" step="0.1" inputmode="decimal">
         </div>
       </div>
       <label class="lock-lbl"><input type="checkbox" id="lockAR" checked>🔒 鎖定長寬比例</label>
-      <div class="ctrl" style="margin-top:14px">
+      <div class="ctrl" style="margin-top:12px">
         <label>解析度（DPI）<span class="val" id="dpiLbl">300</span></label>
         <input type="range" id="dpiSl" min="72" max="600" value="300">
       </div>
-      <div style="font-size:10px;color:var(--dim);margin-top:4px" id="pxInfo">— × — px</div>
+      <div style="font-size:10px;color:var(--dim);margin-top:3px" id="pxInfo">— × — px</div>
     </div>
 
     <!-- S5 產生 -->
@@ -328,87 +318,87 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
       <button class="btn btn-main" id="renderBtn" disabled>⚡ 開始產生半色調</button>
       <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill"></div></div>
       <div class="prog-lbl" id="progLbl"></div>
-      <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG 雕刻圖</button>
-      <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（LightBurn / LaserGRBL）</button>
-      <div class="tip"><strong>SVG</strong>：每個圓點為獨立向量，匯入雷射軟體後可直接使用。</div>
-    </div>
-  </div>
 
-  <!-- ══ Main ══ -->
-  <div class="main">
-    <div class="tab-bar">
-      <button class="tab active" id="tabH">半色調預覽</button>
-      <button class="tab" id="tabO">原始圖片</button>
-      <button class="tab" id="tabB">去背預覽</button>
-    </div>
-    <div class="canvas-wrap">
-      <div class="empty-state" id="emptyEl">
-        <div class="eico">🔥</div>
-        <p>請先上傳圖片（步驟 1）</p>
+      <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG（白底黑點）</button>
+      <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（透明背景，雷射用）</button>
+
+      <div class="tip" style="margin-top:8px">
+        <strong>PNG</strong>：白色底色 + 黑色圓點，適合列印確認。<br>
+        <strong>SVG</strong>：★ 無背景透明 ★ 每個圓點為獨立向量圓，匯入 LightBurn / LaserGRBL 直接使用，不會雕刻到背景。
       </div>
-      <canvas id="cH"></canvas>
-      <canvas id="cO"></canvas>
-      <canvas id="cB"></canvas>
     </div>
-    <div class="status">
-      <div class="stat">輸出：<span class="sv" id="sPx">—</span></div>
-      <div class="stat">圓點：<span class="sv" id="sDots">—</span></div>
-      <div class="stat">格距：<span class="sv" id="sGrid">—</span></div>
-      <div class="stat" id="sSvgWrap" style="display:none">SVG：<span class="sv" id="sSvg">—</span></div>
-    </div>
-  </div>
-</div>
 
-<button class="fab" id="fab">⚙️</button>
-<footer>車城國小資訊老師 @ Google Gemini 協作設計</footer>
+  </div><!-- /sidebar -->
+
+  <!-- ══ 結果區 ══ -->
+  <div class="result-col">
+    <div class="result-col-inner">
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tabH">半色調預覽</button>
+        <button class="tab-btn" id="tabO">原始圖片</button>
+        <button class="tab-btn" id="tabB">去背預覽</button>
+      </div>
+      <div class="cv-wrap">
+        <div class="empty-state" id="emptyEl">
+          <div class="ei">🔥</div>
+          <p>請先上傳圖片（步驟 1）</p>
+        </div>
+        <!-- ★ cH：半色調預覽（白底黑點）→ 在淡色棋盤格上清楚可見 -->
+        <canvas id="cH"></canvas>
+        <!-- cO：原始圖片 -->
+        <canvas id="cO"></canvas>
+        <!-- cB：去背預覽（透明區顯示棋盤格）-->
+        <canvas id="cB"></canvas>
+      </div>
+      <div class="stat-bar">
+        <span>輸出：<span class="sv" id="sPx">—</span></span>
+        <span>圓點：<span class="sv" id="sDots">—</span></span>
+        <span>格距：<span class="sv" id="sGrid">—</span></span>
+        <span id="sSvgWrap" style="display:none">SVG：<span class="sv" id="sSvg">—</span></span>
+      </div>
+    </div>
+    <footer>車城國小資訊老師 @ Google Gemini 協作設計</footer>
+  </div>
+
+</div><!-- /page-wrap -->
 
 <script>
 'use strict';
-// ── DOM refs（每個 id 只宣告一次）──
+/* ── DOM refs ── */
 const $=id=>document.getElementById(id);
-const uploadBox   =$('uploadBox'),   fileInput   =$('fileInput');
-const imgCard     =$('imgCard'),     imgThumb    =$('imgThumb'),   imgMeta   =$('imgMeta');
-const alertAlpha  =$('alertAlpha'),  alertNoAlpha=$('alertNoAlpha');
-const bgOn        =$('bgOn'),        bgPanel     =$('bgPanel'),    bgMode    =$('bgMode');
-const aiSection   =$('aiSection'),   runAiBtn    =$('runAiBtn'),   aiBgStatus=$('aiBgStatus');
-const threshRow   =$('threshRow'),   threshSl    =$('threshSl'),   threshLbl =$('threshLbl');
+const uploadBox=$('uploadBox'), fileInput=$('fileInput');
+const imgCard=$('imgCard'), imgThumb=$('imgThumb'), imgMeta=$('imgMeta');
+const alertAlpha=$('alertAlpha'), alertNoAlpha=$('alertNoAlpha');
+const bgOn=$('bgOn'), bgPanel=$('bgPanel'), bgMode=$('bgMode');
+const aiSec=$('aiSec'), runAiBtn=$('runAiBtn'), aiOk=$('aiOk');
+const threshSec=$('threshSec'), threshSl=$('threshSl'), threshLbl=$('threshLbl');
 const previewBgBtn=$('previewBgBtn');
-const gridSl      =$('gridSl'),      gridLbl     =$('gridLbl');
-const scaleSl     =$('scaleSl'),     scaleLbl    =$('scaleLbl');
-const gammaSl     =$('gammaSl'),     gammaLbl    =$('gammaLbl');
-const contrastSl  =$('contrastSl'),  contrastLbl =$('contrastLbl');
-const invertSw    =$('invertSw');
-const widthCm     =$('widthCm'),     heightCm    =$('heightCm'),   lockAR    =$('lockAR');
-const dpiSl       =$('dpiSl'),       dpiLbl      =$('dpiLbl'),     pxInfo    =$('pxInfo');
-const renderBtn   =$('renderBtn'),   dlPng       =$('dlPng'),      dlSvg     =$('dlSvg');
-const progWrap    =$('progWrap'),    progFill    =$('progFill'),   progLbl   =$('progLbl');
-const tabH        =$('tabH'),        tabO        =$('tabO'),       tabB      =$('tabB');
-const emptyEl     =$('emptyEl'),     cH          =$('cH'),         cO        =$('cO'),    cB=$('cB');
-const sPx         =$('sPx'),         sDots       =$('sDots'),      sGrid     =$('sGrid');
-const sSvgWrap    =$('sSvgWrap'),    sSvg        =$('sSvg');
-const sidebar     =$('sidebar'),     overlay     =$('overlay'),    fab       =$('fab');
-const drawerHandle=$('drawerHandle');
+const gridSl=$('gridSl'), gridLbl=$('gridLbl');
+const scaleSl=$('scaleSl'), scaleLbl=$('scaleLbl');
+const gammaSl=$('gammaSl'), gammaLbl=$('gammaLbl');
+const ctrSl=$('ctrSl'), ctrLbl=$('ctrLbl');
+const invertSw=$('invertSw');
+const wCm=$('wCm'), hCm=$('hCm'), lockAR=$('lockAR');
+const dpiSl=$('dpiSl'), dpiLbl=$('dpiLbl'), pxInfo=$('pxInfo');
+const renderBtn=$('renderBtn'), dlPng=$('dlPng'), dlSvg=$('dlSvg');
+const progWrap=$('progWrap'), progFill=$('progFill'), progLbl=$('progLbl');
+const tabH=$('tabH'), tabO=$('tabO'), tabB=$('tabB');
+const emptyEl=$('emptyEl'), cH=$('cH'), cO=$('cO'), cB=$('cB');
+const sPx=$('sPx'), sDots=$('sDots'), sGrid=$('sGrid'), sSvgWrap=$('sSvgWrap'), sSvg=$('sSvg');
 
-// ── State ──
+/* ── State ── */
 let origImg=null, origW=0, origH=0, ar=1, svgData=null, hasAlpha=false;
 
-// ── 手機抽屜 ──
-const isMob=()=>window.innerWidth<=700;
-const openD =()=>{sidebar.classList.add('open');overlay.classList.add('show');document.body.style.overflow='hidden';};
-const closeD=()=>{sidebar.classList.remove('open');overlay.classList.remove('show');document.body.style.overflow='';};
-fab.addEventListener('click',openD);
-overlay.addEventListener('click',closeD);
-drawerHandle.addEventListener('click',closeD);
-
-// ── Helpers ──
-const rc    =c=>c.getContext('2d',{willReadFrequently:true});
-const cm2px =(cm,dpi)=>Math.round(parseFloat(cm)*dpi/2.54);
-const fmtB  =b=>b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
-const tick  =()=>new Promise(r=>requestAnimationFrame(r));
+/* ── Helpers ── */
+const rc=c=>c.getContext('2d',{willReadFrequently:true});
+const cm2px=(cm,dpi)=>Math.round(parseFloat(cm)*dpi/2.54);
+const fmtB=b=>b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const tick=()=>new Promise(r=>requestAnimationFrame(r));
+const isMobile=()=>window.innerWidth<700;
 
 function updPxInfo(){
   const d=+dpiSl.value;
-  pxInfo.textContent=`${cm2px(widthCm.value,d)} × ${cm2px(heightCm.value,d)} px`;
+  pxInfo.textContent=`${cm2px(wCm.value,d)} × ${cm2px(hCm.value,d)} px`;
 }
 function setProgress(p,lbl=''){
   progFill.style.width=p+'%';
@@ -416,7 +406,7 @@ function setProgress(p,lbl=''){
   progLbl.textContent=lbl;
 }
 
-// ── 偵測 alpha ──
+/* ── 偵測 alpha ── */
 function detectAlpha(img){
   const c=document.createElement('canvas');
   c.width=img.width; c.height=img.height;
@@ -426,12 +416,11 @@ function detectAlpha(img){
   return false;
 }
 
-// ── 上傳 ──
+/* ── 上傳 ── */
 uploadBox.addEventListener('click',()=>fileInput.click());
 ['dragover','dragleave','drop'].forEach(ev=>uploadBox.addEventListener(ev,e=>{
   e.preventDefault();
-  if(ev==='dragover') uploadBox.classList.add('over');
-  else uploadBox.classList.remove('over');
+  uploadBox.classList.toggle('over',ev==='dragover');
   if(ev==='drop'){const f=e.dataTransfer.files[0];if(f?.type.startsWith('image/'))loadFile(f);}
 }));
 fileInput.addEventListener('change',()=>{if(fileInput.files[0])loadFile(fileInput.files[0]);});
@@ -442,369 +431,319 @@ function loadFile(f){
     const img=new Image();
     img.onload=()=>{
       origImg=img; origW=img.width; origH=img.height; ar=origW/origH;
-      // 畫原始 canvas
       cO.width=origW; cO.height=origH;
       rc(cO).drawImage(img,0,0);
-      // 偵測 alpha
       hasAlpha=detectAlpha(img);
+      // 自動設定去背模式
       if(hasAlpha){
-        bgOn.checked=true;
-        bgPanel.classList.add('open');
-        bgMode.value='alpha';
-        syncBgModeUI();
-        alertAlpha.classList.add('show');
-        alertNoAlpha.classList.remove('show');
+        bgOn.checked=true; bgPanel.classList.add('open');
+        bgMode.value='alpha'; syncBgUI();
+        alertAlpha.classList.add('show'); alertNoAlpha.classList.remove('show');
       } else {
-        bgOn.checked=false;
-        bgPanel.classList.remove('open');
-        alertAlpha.classList.remove('show');
-        alertNoAlpha.classList.add('show');
+        bgOn.checked=false; bgPanel.classList.remove('open');
+        alertAlpha.classList.remove('show'); alertNoAlpha.classList.add('show');
       }
       imgThumb.src=ev.target.result;
-      imgMeta.innerHTML=
-        `<strong>${origW}×${origH}</strong><br>`+
+      imgMeta.innerHTML=`<strong>${origW}×${origH}</strong><br>`+
         `${f.type.replace('image/','').toUpperCase()} · ${(f.size/1024).toFixed(0)} KB`+
         (hasAlpha?'<br><span style="color:var(--green)">✅ 含透明背景</span>':'');
       imgCard.style.display='flex';
-      widthCm.value=(origW/300*2.54).toFixed(1);
-      heightCm.value=(origH/300*2.54).toFixed(1);
+      wCm.value=(origW/300*2.54).toFixed(1);
+      hCm.value=(origH/300*2.54).toFixed(1);
       updPxInfo();
       renderBtn.disabled=false;
       dlPng.disabled=true; dlSvg.disabled=true; svgData=null;
       sSvgWrap.style.display='none';
+      aiOk.style.display='none';
       emptyEl.style.display='none';
-      aiBgStatus.style.display='none';
       switchTab('original');
       if(hasAlpha) updNoBg();
+      // 手機自動捲到結果區
+      if(isMobile()) document.querySelector('.result-col').scrollIntoView({behavior:'smooth'});
     };
     img.src=ev.target.result;
   };
   reader.readAsDataURL(f);
 }
 
-// ── Slider sync ──
-widthCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)heightCm.value=(parseFloat(widthCm.value)/ar).toFixed(1);updPxInfo();});
-heightCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)widthCm.value=(parseFloat(heightCm.value)*ar).toFixed(1);updPxInfo();});
+/* ── Sliders ── */
+wCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)hCm.value=(parseFloat(wCm.value)/ar).toFixed(1);updPxInfo();});
+hCm.addEventListener('input',()=>{if(lockAR.checked&&origImg)wCm.value=(parseFloat(hCm.value)*ar).toFixed(1);updPxInfo();});
 dpiSl.addEventListener('input',()=>{dpiLbl.textContent=dpiSl.value;updPxInfo();});
 gridSl.addEventListener('input',()=>gridLbl.textContent=gridSl.value+' px');
 scaleSl.addEventListener('input',()=>scaleLbl.textContent=(+scaleSl.value).toFixed(2));
 gammaSl.addEventListener('input',()=>gammaLbl.textContent=(+gammaSl.value).toFixed(1));
-contrastSl.addEventListener('input',()=>contrastLbl.textContent=contrastSl.value);
+ctrSl.addEventListener('input',()=>ctrLbl.textContent=(+ctrSl.value>0?'+':'')+ctrSl.value);
 threshSl.addEventListener('input',()=>threshLbl.textContent=threshSl.value);
 
-// ── BG 控制 ──
+/* ── 去背 UI ── */
 bgOn.addEventListener('change',()=>bgPanel.classList.toggle('open',bgOn.checked));
-bgMode.addEventListener('change',syncBgModeUI);
-
-function syncBgModeUI(){
+bgMode.addEventListener('change',syncBgUI);
+function syncBgUI(){
   const v=bgMode.value;
-  aiSection.style.display  =(v==='ai')?'block':'none';
-  threshRow.style.display  =(v==='threshold'||v==='bright')?'block':'none';
+  aiSec.style.display=v==='ai'?'block':'none';
+  threshSec.style.display=(v==='threshold'||v==='bright')?'block':'none';
 }
+previewBgBtn.addEventListener('click',()=>{if(origImg){updNoBg();switchTab('nobg');}});
 
-previewBgBtn.addEventListener('click',()=>{ if(origImg){updNoBg();switchTab('nobg');} });
-
-// ══════════════════════════════════════════════════════
-//  AI 去背（@imgly/background-removal via esm.sh）
-//  ★ 完全參考車城海報工具架構 ★
-//  去背後直接替換 origImg → 後續用 alpha 模式讀透明通道
-// ══════════════════════════════════════════════════════
-const IMGLY_ESM='https://esm.sh/@imgly/background-removal@1.4.5';
-let _imglyMod=null;
-
-async function getImglyFn(){
-  if(!_imglyMod) _imglyMod=await import(IMGLY_ESM);
-  const fn=_imglyMod.removeBackground??_imglyMod.default?.removeBackground??_imglyMod.default;
-  if(typeof fn!=='function') throw new Error('找不到 removeBackground 函式，請確認 esm.sh 可連線');
+/* ══════════════════════════════════════════════════════
+   AI 去背（@imgly/background-removal，仿照海報工具架構）
+   ★ 去背後直接替換 origImg，後續走 alpha 模式 ★
+══════════════════════════════════════════════════════ */
+const IMGLY='https://esm.sh/@imgly/background-removal@1.4.5';
+let _mod=null;
+async function getRemoveFn(){
+  if(!_mod) _mod=await import(IMGLY);
+  const fn=_mod.removeBackground??_mod.default?.removeBackground??_mod.default;
+  if(typeof fn!=='function') throw new Error('找不到 removeBackground 函式');
   return fn;
 }
 
 runAiBtn.addEventListener('click',async()=>{
   if(!origImg)return;
   runAiBtn.disabled=true;
-  runAiBtn.textContent='⏳ AI 去背處理中…（請耐心等候）';
-  aiBgStatus.style.display='none';
-
+  runAiBtn.textContent='⏳ AI 去背中…（請耐心等候）';
+  aiOk.style.display='none';
   try{
-    // Step 1：原圖 → Blob
-    const tmpCanvas=document.createElement('canvas');
-    tmpCanvas.width=origW; tmpCanvas.height=origH;
-    rc(tmpCanvas).drawImage(origImg,0,0);
-    const srcBlob=await new Promise(res=>tmpCanvas.toBlob(res,'image/png',1));
-
-    // Step 2：AI 去背（仿照海報工具）
-    const fn=await getImglyFn();
+    // 1. 原圖 → Blob
+    const tc=document.createElement('canvas');
+    tc.width=origW; tc.height=origH;
+    rc(tc).drawImage(origImg,0,0);
+    const blob=await new Promise(r=>tc.toBlob(r,'image/png',1));
+    // 2. AI 去背
+    const fn=await getRemoveFn();
     runAiBtn.textContent='⏳ AI 模型分析中…';
-    const resultBlob=await fn(srcBlob);
-
-    // Step 3：去背結果載入為 Image
-    const resultImg=await new Promise((res,rej)=>{
+    const resultBlob=await fn(blob);
+    // 3. 載入去背結果為 Image
+    const ri=await new Promise((res,rej)=>{
       const i=new Image();
-      i.onload=()=>res(i);
-      i.onerror=()=>rej(new Error('去背結果載入失敗'));
+      i.onload=()=>res(i); i.onerror=()=>rej(new Error('去背結果載入失敗'));
       i.src=URL.createObjectURL(resultBlob);
     });
-
-    // Step 4：★ 直接替換 origImg（仿照海報工具核心架構）
-    origImg=resultImg;
-    origW=resultImg.width; origH=resultImg.height;
+    // 4. ★ 直接替換 origImg
+    origImg=ri; origW=ri.width; origH=ri.height;
     cO.width=origW; cO.height=origH;
-    rc(cO).drawImage(resultImg,0,0);
+    rc(cO).drawImage(ri,0,0);
     hasAlpha=true;
-
-    // Step 5：切換為 alpha 模式（直接讀透明通道，最正確）
-    bgMode.value='alpha';
-    syncBgModeUI();
-    aiBgStatus.style.display='block';
-
-    // Step 6：立即顯示去背預覽
-    updNoBg();
-    switchTab('nobg');
-
+    // 5. 切換 alpha 模式
+    bgMode.value='alpha'; syncBgUI();
+    aiOk.style.display='block';
+    // 6. 立即預覽
+    updNoBg(); switchTab('nobg');
   }catch(e){
     alert('AI 去背失敗：'+e.message+
-      (location.protocol==='file:'?'\n\n⚠️ 本機 file:// 環境下 CDN 可能被封鎖，請部署至 GitHub Pages 後使用。':''));
+      (location.protocol==='file:'?'\n⚠️ 本機 file:// 環境請部署至 GitHub Pages 後使用。':''));
   }finally{
     runAiBtn.disabled=false;
-    runAiBtn.textContent='🤖 執行 AI 去背（原圖更新為去背結果）';
+    runAiBtn.textContent='🤖 執行 AI 去背（原圖更新）';
   }
 });
 
-// ══════════════════════════════════════════════════════
-//  buildMask：建立去背遮罩 Float32Array [0=排除, 1=保留]
-//
-//  ★ 設計原則 ★
-//  alpha 模式：直接讀原圖 PNG 的 alpha 通道（最正確）
-//    - 已去背 PNG：透明區域 alpha=0 → mask=0（不畫圓點）
-//    - AI 去背後替換 origImg → 同樣走 alpha 模式
-//  bright 模式：亮度高 + 彩度低（近白色）→ 視為背景
-//  threshold 模式：手動亮度閾值
-//
-//  ★ 注意：圖片縮放後在 canvas 上讀取的 RGBA 值中，
-//    透明區域是 rgba(0,0,0,0)，alpha=0 必須最先判斷排除，
-//    否則 rgb(0,0,0) 會被誤判為「黑色主體」保留！★
-// ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════
+   buildMask：建立去背遮罩 Float32Array [0=背景, 1=主體]
+
+   ★ 核心邏輯 ★
+   alpha 模式：直接讀 PNG alpha 通道（最正確，無誤判）
+   bright 模式：亮度高 + 彩度低（近白色）→ 視為背景
+   threshold：手動亮度閾值
+
+   關鍵注意：canvas 縮放後透明區域是 rgba(0,0,0,0)，
+   alpha=0 必須最先判斷，否則 rgb(0,0,0) 誤判為主體！
+══════════════════════════════════════════════════════ */
 function buildMask(src, mode, thresh){
-  const{data:d, width:w, height:h}=src;
-  const mask=new Float32Array(w*h);
-
+  const{data:d,width:w,height:h}=src;
+  const m=new Float32Array(w*h);
   for(let i=0;i<w*h;i++){
-    const alpha=d[i*4+3]; // 原始 alpha [0,255]
-
-    if(mode==='alpha'){
-      // ★ 直接使用 alpha 通道：alpha=0 → 透明(排除)，alpha=255 → 完全保留
-      mask[i]=alpha/255;
-      continue;
-    }
-
-    // 非 alpha 模式：alpha<20 的像素一律排除（避免透明黑色假值干擾）
-    if(alpha<20){ mask[i]=0; continue; }
-
-    const r=d[i*4], g=d[i*4+1], b=d[i*4+2];
-    const br=r*0.299+g*0.587+b*0.114; // 亮度 [0,255]
-
+    const a=d[i*4+3];
+    if(mode==='alpha'){m[i]=a/255;continue;}
+    // 非 alpha 模式：透明像素一律排除
+    if(a<20){m[i]=0;continue;}
+    const r=d[i*4],g=d[i*4+1],b=d[i*4+2];
+    const br=r*.299+g*.587+b*.114; // [0,255]
     if(mode==='bright'){
-      // 亮色背景：亮度高 且 RGB 差異小（低彩度，近灰白）→ 視為背景
-      const maxC=Math.max(r,g,b), minC=Math.min(r,g,b);
-      const sat =maxC>0?(maxC-minC)/maxC:0; // 彩度 [0,1]
-      if(br>=thresh && sat<0.25){
-        mask[i]=0;                          // 純背景
-      } else if(br>=(thresh-30) && sat<0.25){
-        mask[i]=(thresh-br)/30;             // 漸變邊緣
-      } else {
-        mask[i]=1;                          // 主體保留
-      }
+      const maxC=Math.max(r,g,b), sat=maxC>0?(maxC-Math.min(r,g,b))/maxC:0;
+      if(br>=thresh&&sat<0.25)       m[i]=0;
+      else if(br>=(thresh-30)&&sat<0.25) m[i]=(thresh-br)/30;
+      else m[i]=1;
     } else {
-      // threshold 模式：單純亮度閾值
-      if(br>=thresh)          mask[i]=0;
-      else if(br>=(thresh-30)) mask[i]=(thresh-br)/30;
-      else                     mask[i]=1;
+      if(br>=thresh)           m[i]=0;
+      else if(br>=(thresh-30)) m[i]=(thresh-br)/30;
+      else                     m[i]=1;
     }
   }
-  return mask;
+  return m;
 }
 
-// ── 去背預覽 canvas（在棋盤格背景上顯示透明效果）──
+/* ── 去背預覽 ── */
 function updNoBg(){
-  if(!origImg) return;
-  // 從原始圖片的 canvas 讀取像素（cO 畫的是 origImg）
+  if(!origImg)return;
   const src=rc(cO).getImageData(0,0,origW,origH);
   cB.width=origW; cB.height=origH;
   const ctx=rc(cB);
   const out=ctx.createImageData(origW,origH);
-
-  if(!bgOn.checked){
-    // 未啟用去背 → 直接顯示原圖
-    out.data.set(src.data);
-    ctx.putImageData(out,0,0);
-    return;
-  }
-
-  const thresh=+threshSl.value;
-  const m=buildMask(src, bgMode.value, thresh);
-
+  if(!bgOn.checked){out.data.set(src.data);ctx.putImageData(out,0,0);return;}
+  const mask=buildMask(src,bgMode.value,+threshSl.value);
   for(let i=0;i<origW*origH;i++){
-    out.data[i*4]  =src.data[i*4];
-    out.data[i*4+1]=src.data[i*4+1];
-    out.data[i*4+2]=src.data[i*4+2];
-    out.data[i*4+3]=Math.round(m[i]*255); // ★ 套用遮罩到 alpha 通道
+    out.data[i*4]=src.data[i*4]; out.data[i*4+1]=src.data[i*4+1];
+    out.data[i*4+2]=src.data[i*4+2]; out.data[i*4+3]=Math.round(mask[i]*255);
   }
   ctx.putImageData(out,0,0);
 }
 
-// ══════════════════════════════════════════════════════════
-//  MAIN RENDER（半色調產生）
-//
-//  流程：
-//  1. 縮放原圖至輸出尺寸
-//  2. 建去背遮罩（若有啟用）
-//  3. Pass1：灰階化，標記無效像素（透明/遮罩外）為 -1
-//  4. Pass2：Auto Levels（白點） + Gamma 壓縮 + S 曲線對比
-//  5. 白底填充，逐格取樣畫圓點
-//  6. 收集 SVG 路徑
-//
-//  ★ 關鍵：無效像素（grayArr=-1）在取樣時完全排除 ★
-//  透明區域的 rgba(0,0,0,0) 不會拉低亮度均值，
-//  不會產生「假黑色」讓背景出現圓點。
-// ══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════
+   MAIN RENDER — 半色調核心
+
+   ★ 輸出規則 ★
+   PNG：白色底色 + 黑色圓點（去背區域無圓點，只有白底）
+   SVG：★ 無背景（無 <rect>）★ 只有 <circle> 黑點
+        → 匯入雷射軟體後透明區域不會被雷射
+
+   ★ 算法流程 ★
+   1. 縮放原圖至輸出解析度
+   2. 建去背遮罩（若啟用）
+   3. 灰階化 + 標記無效像素（透明/遮罩外）= -1
+      ！透明像素 alpha<20 必須最先排除，
+        避免 rgba(0,0,0,0) 的 rgb(0,0,0) 誤判為黑色
+   4. Auto Levels（白點標準化）+ Gamma 壓縮 + S 曲線對比
+   5. 每格 3×3 取樣計算平均亮度（只取有效像素）
+   6. 半色調公式：dotR = (1-L) × maxR（正常）
+                         L × maxR（反相）
+   7. PNG canvas：白底填色，畫黑點
+   8. SVG：只有 <circle>，無 <rect>，背景透明
+══════════════════════════════════════════════════════ */
 renderBtn.addEventListener('click', doRender);
 
 async function doRender(){
-  if(!origImg) return;
+  if(!origImg)return;
   renderBtn.disabled=true;
   setProgress(5,'讀取參數…'); await tick();
-  if(isMob()) closeD();
 
-  const dpi     =+dpiSl.value;
-  const outW    =cm2px(widthCm.value, dpi);
-  const outH    =cm2px(heightCm.value, dpi);
-  const grid    =+gridSl.value;
-  const fillR   =+scaleSl.value;
-  const gamma   =+gammaSl.value;
-  const contrast=+contrastSl.value;
-  const invert  =invertSw.checked;
-  const doBg    =bgOn.checked;
+  const dpi    =+dpiSl.value;
+  const outW   =cm2px(wCm.value,dpi);
+  const outH   =cm2px(hCm.value,dpi);
+  const grid   =+gridSl.value;
+  const fillR  =+scaleSl.value;
+  const gamma  =+gammaSl.value;
+  const ctr    =+ctrSl.value;
+  const invert =invertSw.checked;
+  const doBg   =bgOn.checked;
 
-  // 1. 縮放原圖（origImg 可能已是 AI 去背結果）
+  // 1. 縮放原圖
   const off=document.createElement('canvas');
   off.width=outW; off.height=outH;
-  rc(off).drawImage(origImg, 0,0, outW,outH);
+  rc(off).drawImage(origImg,0,0,outW,outH);
   const imgData=rc(off).getImageData(0,0,outW,outH);
   const pix=imgData.data;
 
   // 2. 去背遮罩
-  let mask=null;
-  if(doBg) mask=buildMask(imgData, bgMode.value, +threshSl.value);
+  const mask=doBg?buildMask(imgData,bgMode.value,+threshSl.value):null;
 
   setProgress(20,'灰階化…'); await tick();
 
-  // 3. Pass1：灰階化
-  //    ★ 透明像素（alpha<20）或遮罩外（mask<0.05）→ grayArr[i]=-1（無效）
-  //    有效像素 → grayArr[i]=[0,1] 亮度值
+  // 3. 灰階化（標記無效像素 = -1）
   const N=outW*outH;
-  const grayArr=new Float32Array(N);
-  let   maxL=0;
-
+  const gray=new Float32Array(N);
+  let maxL=0;
   for(let i=0;i<N;i++){
     const a=pix[i*4+3];
-    // ★ 先判斷 alpha：透明像素必須排除，不能讓 rgb(0,0,0) 污染亮度
-    if(a<20){ grayArr[i]=-1; continue; }
-    if(doBg && mask && mask[i]<0.05){ grayArr[i]=-1; continue; }
-    const g=(pix[i*4]*0.299 + pix[i*4+1]*0.587 + pix[i*4+2]*0.114)/255;
-    grayArr[i]=g;
-    if(g>maxL) maxL=g;
+    // ★ 先排除透明：rgba(0,0,0,0) 不能當黑色計算
+    if(a<20){gray[i]=-1;continue;}
+    if(doBg&&mask&&mask[i]<0.05){gray[i]=-1;continue;}
+    const g=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
+    gray[i]=g;
+    if(g>maxL)maxL=g;
   }
 
-  // 4. Pass2：白點標準化 + Gamma + S 曲線
-  //    minL 固定為 0（不做黑點拉伸，保留純黑的最大圓點效果）
-  const range=Math.max(0.01, maxL); // maxL - 0
+  // 4. Auto Levels + Gamma + S 曲線
+  //    minL 固定 0（保留純黑的最大圓點效果）
+  const range=Math.max(0.01,maxL);
   for(let i=0;i<N;i++){
-    if(grayArr[i]<0) continue;
-    let g=grayArr[i]/range;           // 白點標準化
-    g=Math.pow(g, 1/gamma);           // Gamma 壓縮（淺色變暗）
-    if(contrast!==0){                 // S 曲線對比
-      const f=(259*(contrast+255))/(255*(259-contrast));
-      g=Math.min(1, Math.max(0, f*(g-0.5)+0.5));
+    if(gray[i]<0)continue;
+    let g=gray[i]/range;             // 白點標準化
+    g=Math.pow(g,1/gamma);           // Gamma 壓縮
+    if(ctr!==0){
+      const f=(259*(ctr+255))/(255*(259-ctr));
+      g=Math.min(1,Math.max(0,f*(g-0.5)+0.5));
     }
-    grayArr[i]=g;
+    gray[i]=g;
   }
 
-  // 5. 輸出 canvas（永遠有底色，確保預覽和下載可見）
+  // 5. 建立 canvas（PNG 用）
   cH.width=outW; cH.height=outH;
   const ctx=rc(cH);
-  ctx.fillStyle=invert?'#000000':'#ffffff';
+  // ★ PNG 永遠白底（確保列印時清楚可見）
+  ctx.fillStyle=invert?'#000':'#fff';
   ctx.fillRect(0,0,outW,outH);
-  ctx.fillStyle=invert?'#ffffff':'#000000';
+  ctx.fillStyle=invert?'#fff':'#000';
 
-  const half =grid/2;
-  const maxR =half*fillR;
-  const cols =Math.ceil(outW/grid);
-  const rows =Math.ceil(outH/grid);
+  const half=grid/2, maxR=half*fillR;
+  const cols=Math.ceil(outW/grid), rows=Math.ceil(outH/grid);
   const total=cols*rows;
-  const parts=[];
+  const svgCircles=[];
   let dots=0, bi=0;
 
   setProgress(30,'繪製圓點…');
 
   function drawBatch(){
-    const end=Math.min(bi+1000, total);
+    const end=Math.min(bi+1000,total);
     for(;bi<end;bi++){
       const col=bi%cols, row=Math.floor(bi/cols);
       const cx=col*grid+half, cy=row*grid+half;
-      if(cx>=outW || cy>=outH) continue;
+      if(cx>=outW||cy>=outH)continue;
 
-      // ★ 3×3 鄰域取樣（嚴格排除 grayArr=-1 的無效像素）
-      let sumL=0, cnt=0;
-      for(let dy=-1;dy<=1;dy++){
-        for(let dx=-1;dx<=1;dx++){
-          const sx=Math.min(outW-1, Math.max(0, Math.round(cx)+dx));
-          const sy=Math.min(outH-1, Math.max(0, Math.round(cy)+dy));
-          const gv=grayArr[sy*outW+sx];
-          if(gv<0) continue; // 排除無效
-          sumL+=gv; cnt++;
-        }
+      // 3×3 取樣（嚴格排除 gray[i]<0 的無效像素）
+      let sumL=0,cnt=0;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+        const sx=Math.min(outW-1,Math.max(0,Math.round(cx)+dx));
+        const sy=Math.min(outH-1,Math.max(0,Math.round(cy)+dy));
+        const gv=gray[sy*outW+sx];
+        if(gv<0)continue;
+        sumL+=gv; cnt++;
       }
-      if(cnt===0) continue; // 整格無效 → 不畫
+      if(cnt===0)continue; // 整格無效 → 跳過
 
-      const L=sumL/cnt; // 平均亮度 [0,1]（已含 Gamma+對比）
+      const L=sumL/cnt;
+      // 半色調公式
+      let nd=invert?L:(1-L);
 
-      // ★ 半色調公式（線性）
-      // 正常：L=0(黑) → dotR=maxR；L=1(白) → dotR=0
-      // 反相：L=1(白) → dotR=maxR；L=0(黑) → dotR=0
-      let nd=invert ? L : (1-L);
-
-      // 遮罩邊緣融合（讓主體邊緣圓點漸小）
-      if(doBg && mask){
-        const mx=Math.min(Math.round(cx), outW-1);
-        const my=Math.min(Math.round(cy), outH-1);
-        const mv=mask[my*outW+mx];
-        if(mv<0.05) continue;
-        nd*=Math.min(1, mv);
+      // 遮罩邊緣融合
+      if(doBg&&mask){
+        const mv=mask[Math.min(Math.round(cy),outH-1)*outW+Math.min(Math.round(cx),outW-1)];
+        if(mv<0.05)continue;
+        nd*=Math.min(1,mv);
       }
 
       const dotR=nd*maxR;
-      if(dotR<0.35) continue; // 太小的點不畫
+      if(dotR<0.35)continue;
 
+      // 畫到 PNG canvas
       ctx.beginPath();
-      ctx.arc(cx, cy, dotR, 0, Math.PI*2);
+      ctx.arc(cx,cy,dotR,0,Math.PI*2);
       ctx.fill();
-      parts.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${dotR.toFixed(2)}"/>`);
+
+      // ★ SVG：只收集 <circle>，不加 <rect> 背景
+      svgCircles.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${dotR.toFixed(2)}"/>`);
       dots++;
     }
 
-    setProgress(30+Math.round(bi/total*65), `繪製中 ${Math.round(bi/total*100)}%`);
+    setProgress(30+Math.round(bi/total*65),`繪製中 ${Math.round(bi/total*100)}%`);
     if(bi<total) requestAnimationFrame(drawBatch);
-    else finalize(outW, outH, dots, parts, grid, dpi, invert);
+    else finalize(outW,outH,dots,svgCircles,grid,dpi,invert);
   }
   requestAnimationFrame(drawBatch);
 }
 
-function finalize(w,h,dots,parts,grid,dpi,invert){
+function finalize(w,h,dots,circles,grid,dpi,invert){
+  const dotColor=invert?'white':'black';
+
+  // ★ SVG 輸出：無 <rect> 背景 → 透明背景
+  //    只有 <circle> 黑點，雷射只雕刻有點的地方
   svgData=`<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 v3.4 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
-<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <rect width="${w}" height="${h}" fill="${invert?'black':'white'}"/>
-  <g fill="${invert?'white':'black'}">${parts.join('')}</g>
+<!-- 車城國小 雷射雕刻半色調 v4.0 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<!-- ★ 背景透明，只有圓點，適合直接匯入雷射雕刻軟體 -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <g fill="${dotColor}">${circles.join('')}</g>
 </svg>`;
 
   sPx.textContent=`${w}×${h} px`;
@@ -812,39 +751,42 @@ function finalize(w,h,dots,parts,grid,dpi,invert){
   sGrid.textContent=`${grid} px`;
   sSvgWrap.style.display='';
   sSvg.textContent=fmtB(new Blob([svgData]).size);
+
   setProgress(100,'✅ 完成');
   setTimeout(()=>setProgress(0),1500);
   dlPng.disabled=false; dlSvg.disabled=false;
   renderBtn.disabled=false;
   emptyEl.style.display='none';
   switchTab('halftone');
+
+  // 手機捲到結果
+  if(isMobile()) document.querySelector('.cv-wrap').scrollIntoView({behavior:'smooth'});
 }
 
-// ── 下載 ──
+/* ── 下載 ── */
 dlPng.addEventListener('click',()=>{
   cH.toBlob(blob=>{
     Object.assign(document.createElement('a'),
-      {href:URL.createObjectURL(blob), download:'halftone-laser.png'}).click();
+      {href:URL.createObjectURL(blob),download:'halftone-laser.png'}).click();
   },'image/png');
 });
 dlSvg.addEventListener('click',()=>{
-  if(!svgData) return;
+  if(!svgData)return;
   Object.assign(document.createElement('a'),{
     href:URL.createObjectURL(new Blob([svgData],{type:'image/svg+xml'})),
     download:'halftone-laser.svg'
   }).click();
 });
 
-// ── Tab 切換 ──
+/* ── Tab 切換 ── */
 function switchTab(t){
   [cH,cO,cB].forEach(c=>c.style.display='none');
   [tabH,tabO,tabB].forEach(b=>b.classList.remove('active'));
-  const map={
-    halftone:()=>{cH.style.display='block'; tabH.classList.add('active');},
-    original :()=>{cO.style.display='block'; tabO.classList.add('active');},
-    nobg    :()=>{cB.style.display='block'; tabB.classList.add('active'); updNoBg();}
-  };
-  map[t]?.();
+  ({
+    halftone:()=>{cH.style.display='block';tabH.classList.add('active');},
+    original:()=>{cO.style.display='block';tabO.classList.add('active');},
+    nobg    :()=>{cB.style.display='block';tabB.classList.add('active');updNoBg();}
+  })[t]?.();
 }
 tabH.addEventListener('click',()=>{if(origImg)switchTab('halftone');});
 tabO.addEventListener('click',()=>{if(origImg)switchTab('original');});

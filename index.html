@@ -149,7 +149,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
     <h1>車城國小｜雷射雕刻半色調工具</h1>
     <p>去背 · PNG 輸出 · SVG 向量（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="hbadge">v3.1</div>
+  <div class="hbadge">v3.2</div>
 </header>
 
 <div class="overlay" id="overlay"></div>
@@ -250,8 +250,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
         <label>Gamma 修正 <span class="val" id="gammaLbl">1.8</span></label>
         <input type="range" id="gammaSl" min="0.5" max="3.0" value="1.8" step="0.1">
         <div class="tip" style="margin-top:4px">
-          = 1.0：線性對應；&gt; 1.0：加深整體（讓淺色也有圓點）。<br>
-          推薦雷射雕刻：<strong>1.5–2.0</strong>。
+          = 1.0：標準線性，原色直接對應。<br>
+          &gt; 1.0：<strong>壓暗整體</strong>，讓淺色區（奶油色/皮膚）也產生明顯圓點。<br>
+          推薦雷射雕刻：<strong>1.5–2.2</strong>（預設 1.8）。
         </div>
       </div>
 
@@ -598,7 +599,7 @@ async function doRender(){
 
   setProgress(20,'灰階化…'); await tick();
 
-  // 3. 灰階化
+  // 3. 灰階化 + 自動白點標準化（Auto Levels）
   //    - 透明像素（alpha<20）→ grayArr=-1（標記無效）
   //    - 遮罩外（mask<0.05）  → grayArr=-1（標記無效）
   //    - 有效像素             → grayArr=[0,1] 亮度值
@@ -606,19 +607,34 @@ async function doRender(){
   const grayArr=new Float32Array(N);
   const alpArr =new Uint8Array(N);
 
+  // Pass 1：計算灰階，記錄有效像素的最暗與最亮值
+  let minL=1, maxL=0;
   for(let i=0;i<N;i++){
     alpArr[i]=pix[i*4+3];
     if(alpArr[i]<20){grayArr[i]=-1;continue;}
     if(doBg&&mask&&mask[i]<0.05){grayArr[i]=-1;continue;}
-    // 線性灰階
-    let g0=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
-    // ★ S 曲線對比增強（僅對有效像素套用）
+    const g=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
+    grayArr[i]=g;
+    if(g<minL) minL=g;
+    if(g>maxL) maxL=g;
+  }
+
+  // Pass 2：自動 Levels 標準化（讓最暗=0，最亮=1）
+  //         再套 Gamma 壓縮、S 曲線對比
+  const range=Math.max(0.01, maxL-minL);
+  for(let i=0;i<N;i++){
+    if(grayArr[i]<0) continue;
+    // Auto Levels：把有效範圍撐滿 [0,1]
+    let g=(grayArr[i]-minL)/range;
+    // Gamma 壓縮：gamma>1 讓淺色變暗（圓點變大）
+    // ★ 套在 L 上，而非 1-L ★
+    g=Math.pow(g, 1/gamma);   // gamma=2 → 淺色明顯壓暗
+    // S 曲線對比增強
     if(contrast!==0){
-      // 公式：sigmoidal contrast, contrast ∈ [-80,80] → factor ∈ [0,1]
       const f=(259*(contrast+255))/(255*(259-contrast));
-      g0=Math.min(1,Math.max(0,f*(g0-0.5)+0.5));
+      g=Math.min(1,Math.max(0,f*(g-0.5)+0.5));
     }
-    grayArr[i]=g0;
+    grayArr[i]=g;
   }
 
   // 4. 輸出 canvas（永遠有底色）
@@ -658,18 +674,13 @@ async function doRender(){
       // 全無效 → 該格完全在透明/遮罩外 → 不畫任何東西
       if(cnt===0) continue;
 
-      const L=sumL/cnt;  // 平均亮度 [0,1]
+      const L=sumL/cnt;  // 平均亮度 [0,1]（已含 Auto Levels + Gamma + 對比）
 
-      // ★ 正確半色調公式 ★
-      // 正常模式：黑色(L=0) → 大圓點；白色(L=1) → 不畫
-      // 反相模式：白色(L=1) → 大圓點；黑色(L=0) → 不畫
-      // 加上 Gamma 修正
-      let normalizedDark; // 0=最亮不畫, 1=最暗最大圓
-      if(invert){
-        normalizedDark = Math.pow(L, gamma);          // 亮的 → 大圓
-      } else {
-        normalizedDark = Math.pow(1-L, gamma);        // 暗的 → 大圓
-      }
+      // ★ 半色調公式（直接線性）★
+      // grayArr 已經過 Gamma 壓縮，L 值代表「視覺暗度」
+      // 正常：L=0(最暗) → 大圓點；L=1(最亮) → 無圓點
+      // 反相：L=1(最亮) → 大圓點；L=0(最暗) → 無圓點
+      const normalizedDark = invert ? L : (1 - L);
 
       // 遮罩邊緣融合（羽化邊緣讓圓點漸小）
       if(doBg&&mask){
@@ -704,7 +715,7 @@ function finalize(w,h,dots,parts,grid,dpi,invert){
 
   svgData=
 `<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 v3.1 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<!-- 車城國小 雷射雕刻半色調 v3.2 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <rect width="${w}" height="${h}" fill="${bgCol}"/>
   <g fill="${dotCol}">${parts.join('')}</g>

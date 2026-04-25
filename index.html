@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
-<title>車城國小｜雷射雕刻半色調工具</title>
+<title>車城國小｜雷射雕刻半色調工具 v3.1</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
 :root{
@@ -149,7 +149,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
     <h1>車城國小｜雷射雕刻半色調工具</h1>
     <p>去背 · PNG 輸出 · SVG 向量（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="hbadge">v3.0</div>
+  <div class="hbadge">v3.1</div>
 </header>
 
 <div class="overlay" id="overlay"></div>
@@ -241,18 +241,26 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
       </div>
 
       <div class="ctrl">
-        <label>圓點最大填充率 <span class="val" id="scaleLbl">0.90</span></label>
-        <input type="range" id="scaleSl" min="0.3" max="1.0" value="0.9" step="0.05">
+        <label>圓點最大填充率 <span class="val" id="scaleLbl">0.92</span></label>
+        <input type="range" id="scaleSl" min="0.3" max="1.0" value="0.92" step="0.02">
         <div class="tip" style="margin-top:4px">純黑像素的圓點半徑 = 格距/2 × 填充率。建議 0.85–0.95。</div>
       </div>
 
       <div class="ctrl">
-        <label>Gamma 修正 <span class="val" id="gammaLbl">1.0</span></label>
-        <input type="range" id="gammaSl" min="0.5" max="3.0" value="1.0" step="0.1">
+        <label>Gamma 修正 <span class="val" id="gammaLbl">1.8</span></label>
+        <input type="range" id="gammaSl" min="0.5" max="3.0" value="1.8" step="0.1">
         <div class="tip" style="margin-top:4px">
-          = 1.0：線性對應（標準）<br>
-          &gt; 1.0：整體偏暗（圓點更多）<br>
-          &lt; 1.0：整體偏亮（圓點更少）
+          = 1.0：線性對應；&gt; 1.0：加深整體（讓淺色也有圓點）。<br>
+          推薦雷射雕刻：<strong>1.5–2.0</strong>。
+        </div>
+      </div>
+
+      <div class="ctrl">
+        <label>對比增強（S 曲線）<span class="val" id="contrastLbl">0</span></label>
+        <input type="range" id="contrastSl" min="-80" max="80" value="0" step="5">
+        <div class="tip" style="margin-top:4px">
+          正值：拉開明暗對比，深色更黑、淺色更白。<br>
+          負值：壓縮對比，圓點大小趨於一致。
         </div>
       </div>
 
@@ -345,6 +353,7 @@ const previewBgBtn=$('previewBgBtn');
 const gridSl=$('gridSl'),gridLbl=$('gridLbl');
 const scaleSl=$('scaleSl'),scaleLbl=$('scaleLbl');
 const gammaSl=$('gammaSl'),gammaLbl=$('gammaLbl');
+const contrastSl=$('contrastSl'),contrastLbl=$('contrastLbl');
 const invertSw=$('invertSw');
 const widthCm=$('widthCm'),heightCm=$('heightCm'),lockAR=$('lockAR');
 const dpiSl=$('dpiSl'),dpiLbl=$('dpiLbl'),pxInfo=$('pxInfo');
@@ -462,6 +471,7 @@ dpiSl.addEventListener('input',()=>{dpiLbl.textContent=dpiSl.value;updPxInfo();}
 gridSl.addEventListener('input',()=>gridLbl.textContent=gridSl.value+' px');
 scaleSl.addEventListener('input',()=>scaleLbl.textContent=(+scaleSl.value).toFixed(2));
 gammaSl.addEventListener('input',()=>gammaLbl.textContent=(+gammaSl.value).toFixed(1));
+contrastSl.addEventListener('input',()=>contrastLbl.textContent=contrastSl.value);
 threshSl.addEventListener('input',()=>threshLbl.textContent=threshSl.value);
 featherSl.addEventListener('input',()=>featherLbl.textContent=featherSl.value+' px');
 
@@ -569,8 +579,9 @@ async function doRender(){
   const outW   = cm2px(widthCm.value,dpi);
   const outH   = cm2px(heightCm.value,dpi);
   const grid   = +gridSl.value;
-  const fillR  = +scaleSl.value;       // 填充率 [0.3, 1.0]
-  const gamma  = +gammaSl.value;       // Gamma 修正
+  const fillR  = +scaleSl.value;
+  const gamma  = +gammaSl.value;
+  const contrast = +contrastSl.value;   // ★ 新增
   const invert = invertSw.checked;
   const doBg   = bgOn.checked;
 
@@ -600,7 +611,14 @@ async function doRender(){
     if(alpArr[i]<20){grayArr[i]=-1;continue;}
     if(doBg&&mask&&mask[i]<0.05){grayArr[i]=-1;continue;}
     // 線性灰階
-    grayArr[i]=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
+    let g0=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
+    // ★ S 曲線對比增強（僅對有效像素套用）
+    if(contrast!==0){
+      // 公式：sigmoidal contrast, contrast ∈ [-80,80] → factor ∈ [0,1]
+      const f=(259*(contrast+255))/(255*(259-contrast));
+      g0=Math.min(1,Math.max(0,f*(g0-0.5)+0.5));
+    }
+    grayArr[i]=g0;
   }
 
   // 4. 輸出 canvas（永遠有底色）
@@ -686,7 +704,7 @@ function finalize(w,h,dots,parts,grid,dpi,invert){
 
   svgData=
 `<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 v3.0 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<!-- 車城國小 雷射雕刻半色調 v3.1 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <rect width="${w}" height="${h}" fill="${bgCol}"/>
   <g fill="${dotCol}">${parts.join('')}</g>

@@ -172,7 +172,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
     <h1>車城國小｜雷射雕刻半色調工具</h1>
     <p>去背 · 半色調點陣 · PNG · SVG（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="badge">v4.0</div>
+  <div class="badge">v4.1</div>
 </header>
 
 <div class="page-wrap">
@@ -319,11 +319,11 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
       <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill"></div></div>
       <div class="prog-lbl" id="progLbl"></div>
 
-      <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG（白底黑點）</button>
+      <button class="btn btn-dl" id="dlPng" disabled>⬇ 下載 PNG（去背→透明底 / 未去背→白底）</button>
       <button class="btn btn-svg" id="dlSvg" disabled>⬇ 下載 SVG（透明背景，雷射用）</button>
 
       <div class="tip" style="margin-top:8px">
-        <strong>PNG</strong>：白色底色 + 黑色圓點，適合列印確認。<br>
+        <strong>PNG</strong>：啟用去背時輸出<strong>透明底 PNG</strong>（黑色圓點，無白色背景），未去背時白底。<br>
         <strong>SVG</strong>：★ 無背景透明 ★ 每個圓點為獨立向量圓，匯入 LightBurn / LaserGRBL 直接使用，不會雕刻到背景。
       </div>
     </div>
@@ -655,12 +655,20 @@ async function doRender(){
   }
 
   // 4. Auto Levels + Gamma + S 曲線
-  //    minL 固定 0（保留純黑的最大圓點效果）
-  const range=Math.max(0.01,maxL);
+  //    ★ 同時記錄 minL（黑點拉伸），讓暗部圓點更飽滿
+  let minL=1;
   for(let i=0;i<N;i++){
     if(gray[i]<0)continue;
-    let g=gray[i]/range;             // 白點標準化
-    g=Math.pow(g,1/gamma);           // Gamma 壓縮
+    if(gray[i]<minL) minL=gray[i];
+  }
+  // 避免 minL 過高壓縮（若圖片整體太亮，黑點拉伸最多到 0.1）
+  minL=Math.min(minL, 0.1);
+  const range=Math.max(0.01, maxL-minL);
+  for(let i=0;i<N;i++){
+    if(gray[i]<0)continue;
+    let g=(gray[i]-minL)/range;       // Auto Levels（黑點+白點）
+    g=Math.max(0,Math.min(1,g));
+    g=Math.pow(g,1/gamma);            // Gamma 壓縮
     if(ctr!==0){
       const f=(259*(ctr+255))/(255*(259-ctr));
       g=Math.min(1,Math.max(0,f*(g-0.5)+0.5));
@@ -671,9 +679,14 @@ async function doRender(){
   // 5. 建立 canvas（PNG 用）
   cH.width=outW; cH.height=outH;
   const ctx=rc(cH);
-  // ★ PNG 永遠白底（確保列印時清楚可見）
-  ctx.fillStyle=invert?'#000':'#fff';
-  ctx.fillRect(0,0,outW,outH);
+  // ★ 已啟用去背 → 透明底（去背區域不填色，保留透明）
+  // ★ 未去背    → 白底（正常列印用）
+  if(doBg){
+    ctx.clearRect(0,0,outW,outH); // 透明
+  } else {
+    ctx.fillStyle=invert?'#000':'#fff';
+    ctx.fillRect(0,0,outW,outH);
+  }
   ctx.fillStyle=invert?'#fff':'#000';
 
   const half=grid/2, maxR=half*fillR;
@@ -739,7 +752,7 @@ function finalize(w,h,dots,circles,grid,dpi,invert){
   // ★ SVG 輸出：無 <rect> 背景 → 透明背景
   //    只有 <circle> 黑點，雷射只雕刻有點的地方
   svgData=`<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 v4.0 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<!-- 車城國小 雷射雕刻半色調 v4.1 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
 <!-- ★ 背景透明，只有圓點，適合直接匯入雷射雕刻軟體 -->
 <svg xmlns="http://www.w3.org/2000/svg"
      width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
@@ -765,6 +778,8 @@ function finalize(w,h,dots,circles,grid,dpi,invert){
 
 /* ── 下載 ── */
 dlPng.addEventListener('click',()=>{
+  // ★ 去背模式：直接輸出透明底 PNG（cH 本身已是透明底）
+  // ★ 非去背：cH 是白底，直接輸出
   cH.toBlob(blob=>{
     Object.assign(document.createElement('a'),
       {href:URL.createObjectURL(blob),download:'halftone-laser.png'}).click();

@@ -149,7 +149,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:8px 
     <h1>車城國小｜雷射雕刻半色調工具</h1>
     <p>去背 · PNG 輸出 · SVG 向量（LightBurn / LaserGRBL）</p>
   </div>
-  <div class="hbadge">v3.2</div>
+  <div class="hbadge">v3.3</div>
 </header>
 
 <div class="overlay" id="overlay"></div>
@@ -460,6 +460,7 @@ function loadFile(f){
       updPxInfo();
       renderBtn.disabled=false;
       dlPng.disabled=true; dlSvg.disabled=true; svgData=null;
+      _aiBgImg=null; // 換圖時清除 AI 去背快取
       sSvgWrap.style.display='none';
       emptyEl.style.display='none';
       switchTab('original');
@@ -688,20 +689,23 @@ async function doRender(){
   const grayArr=new Float32Array(N);
   const alpArr =new Uint8Array(N);
 
-  // Pass 1：計算灰階，記錄有效像素的最暗與最亮值
-  let minL=1, maxL=0;
+  // Pass 1：計算灰階，記錄有效像素的亮度範圍
+  // ★ minL 從 0 開始（不從有效最暗值），避免 Auto Levels 過度拉伸
+  //   讓純黑（0）→ 最大圓點，純白（1）→ 不畫，不受限於圖片最暗值
+  let maxL=0;
   for(let i=0;i<N;i++){
     alpArr[i]=pix[i*4+3];
     if(alpArr[i]<20){grayArr[i]=-1;continue;}
     if(doBg&&mask&&mask[i]<0.05){grayArr[i]=-1;continue;}
     const g=(pix[i*4]*.299+pix[i*4+1]*.587+pix[i*4+2]*.114)/255;
     grayArr[i]=g;
-    if(g<minL) minL=g;
     if(g>maxL) maxL=g;
   }
+  // 若圖片整體很亮（例如奶油色吉祥物），maxL≈0.95
+  // 把 maxL 正規化讓最亮有效像素 → 1
+  const minL=0; // ★ 固定 0，不做黑點拉伸
 
-  // Pass 2：自動 Levels 標準化（讓最暗=0，最亮=1）
-  //         再套 Gamma 壓縮、S 曲線對比
+  // Pass 2：標準化 + Gamma + S 曲線
   const range=Math.max(0.01, maxL-minL);
   for(let i=0;i<N;i++){
     if(grayArr[i]<0) continue;
@@ -761,7 +765,7 @@ async function doRender(){
       // grayArr 已經過 Gamma 壓縮，L 值代表「視覺暗度」
       // 正常：L=0(最暗) → 大圓點；L=1(最亮) → 無圓點
       // 反相：L=1(最亮) → 大圓點；L=0(最暗) → 無圓點
-      const normalizedDark = invert ? L : (1 - L);
+      let normalizedDark = invert ? L : (1 - L);
 
       // 遮罩邊緣融合（羽化邊緣讓圓點漸小）
       if(doBg&&mask){
@@ -796,7 +800,7 @@ function finalize(w,h,dots,parts,grid,dpi,invert){
 
   svgData=
 `<?xml version="1.0" encoding="UTF-8"?>
-<!-- 車城國小 雷射雕刻半色調 v3.2 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
+<!-- 車城國小 雷射雕刻半色調 v3.3 | DPI:${dpi} 格距:${grid}px 圓點:${dots} -->
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <rect width="${w}" height="${h}" fill="${bgCol}"/>
   <g fill="${dotCol}">${parts.join('')}</g>
